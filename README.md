@@ -1,1 +1,3 @@
 # RepeatAfterMe.ai
+
+**RepeatAfterMe.Ai** is a full-stack web application that helps users improve their English spelling through interactive learning. Whether you're a beginner or looking to sharpen your skills, this app offers a simple, engaging way to practice and learn how to spell words correctly.
