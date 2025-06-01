@@ -36,7 +36,7 @@ def evaluate(audio_path, target_word):
     target_phonemes = words_to_phonemes(target_word.lower())
     transcribed_phonemes = words_to_phonemes(transcription)
 
-    # use phoneme similary if possible, otherwise text comparison
+    # use phoneme similarity if possible, otherwise text comparison
     if not target_phonemes or not transcribed_phonemes:
         score = difflib.SequenceMatcher(None, target_word.lower(), transcription).ratio()
     else:
