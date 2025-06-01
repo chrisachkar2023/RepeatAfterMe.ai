@@ -1,1 +1,2 @@
-.DS_Store   # macOS file
+.DS_Store       # macOS file
+__pycache__     # byte code cache files
