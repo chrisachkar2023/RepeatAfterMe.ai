@@ -46,10 +46,3 @@ def evaluate(audio_path, target_word):
         "transcription": transcription,
         "score": round(score, 3)
     }
-
-# main
-file_audio = "/Users/Christopher/Desktop/banana.m4a"
-target_word = "banana"
-result = evaluate(file_audio, target_word)
-print("Transcribed:", result["transcription"])
-print("Pronunciation score:", result["score"])

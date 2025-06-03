@@ -1,13 +1,33 @@
 <!DOCTYPE html>
 <html>
+ <body style="background-color: rgb(116, 193, 195);">
+
 <head>
     <title>RepeatAfterMe.ai</title>
+    <style>
+        body {
+        background-color: green;
+        }
+    </style>
 </head>
 <body>
     <h1>RepeatAfterMe.ai</h1>
     <hr>
     <h2>Word:</h2> {{ word }}
     <h3>Upload File:</h3>
-    <input type="file" id="fileinput" class="hidden">
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <!-- Hidden input to send the word with the form -->
+        <input type="hidden" name="word" value="{{ word }}">
+        <input type="file" name="file" id="fileinput"> 
+        <button type="submit">Submit</button>
+    </form>
+    <hr>
+    <h3>Results:</h3>
+    {% if result %}
+        <p><strong>Transcribed Text:</strong> {{ result.transcription }}</p>
+        <p><strong>Pronunciation Score:</strong> {{ result.score }}</p>
+    {% else %}
+        <p>No results yet. Upload a file and try.</p>
+    {% endif %}
 </body>
 </html>
