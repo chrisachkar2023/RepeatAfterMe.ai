@@ -18,7 +18,7 @@
     <form action="/upload" method="POST" enctype="multipart/form-data">
         <!-- Hidden input to send the word with the form -->
         <input type="hidden" name="word" value="{{ word }}">
-        <input type="file" name="file" id="fileinput"> 
+        <input type="file" name="file" id="fileinput" required> 
         <button type="submit">Submit</button>
     </form>
     <hr>

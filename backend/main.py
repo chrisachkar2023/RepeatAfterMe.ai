@@ -1,4 +1,4 @@
-import os  # you forgot this import
+import os
 from fastapi import FastAPI, Request, Form, UploadFile, File
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
