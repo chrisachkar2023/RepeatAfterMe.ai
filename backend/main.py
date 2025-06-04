@@ -4,14 +4,39 @@ from fastapi.templating import Jinja2Templates
 import random
 from backend.evaluator import evaluate
 import io
+import sqlite3
 
 app = FastAPI()
 templates = Jinja2Templates(directory="frontend")
 
+def get_easy_words():
+    connect = sqlite3.connect("words.db")
+    cursor = connect.cursor()
+    cursor.execute("SELECT word FROM words WHERE difficulty = 'easy'")
+    words = [row[0] for row in cursor.fetchall()]
+    connect.close()
+    return words
+
+def get_medium_words():
+    connect = sqlite3.connect("words.db")
+    cursor = connect.cursor()
+    cursor.execute("SELECT word FROM words WHERE difficulty = 'medium'")
+    words = [row[0] for row in cursor.fetchall()]
+    connect.close()
+    return words
+
+def get_hard_words():
+    connect = sqlite3.connect("words.db")
+    cursor = connect.cursor()
+    cursor.execute("SELECT word FROM words WHERE difficulty = 'hard'")
+    words = [row[0] for row in cursor.fetchall()]
+    connect.close()
+    return words
+
 # root (home page)
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    words = ["Banana", "Apple", "Orange", "Grape", "Kiwi"]
+    words = get_medium_words()
     word = random.choice(words)
     return templates.TemplateResponse("index.html", {"request": request, "word": word})
 
