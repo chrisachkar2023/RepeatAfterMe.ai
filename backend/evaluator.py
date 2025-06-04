@@ -2,14 +2,19 @@ from transformers import pipeline
 import pronouncing
 import difflib
 import librosa
+from pydub import AudioSegment
+import numpy as np
 
 # initialize automatic speech recognition (ASR) pipeline
 asr = pipeline("automatic-speech-recognition", model="facebook/wav2vec2-base-960h")
 
-# loads audio file
-def load_audio(path):
-    audio, _ = librosa.load(path, sr=16000) # change sample rate per model
-    return audio
+# loads input audio
+def load_audio(unprocessed_audio):
+    audio = AudioSegment.from_file(unprocessed_audio)
+    audio = audio.set_channels(1).set_frame_rate(16000) # change rate per model
+    samples = np.array(audio.get_array_of_samples()).astype(np.float32)
+    samples /= 32768.0
+    return samples
 
 # uses ASR pipeline to transcribe audio
 def transcribe(audio):
