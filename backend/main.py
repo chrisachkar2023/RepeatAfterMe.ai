@@ -18,7 +18,7 @@ async def read_root(request: Request):
 # form post handler
 @app.post("/upload", response_class=HTMLResponse)
 async def post_form(request: Request, word: str = Form(...), file: UploadFile = File(...)):
-    # parse file and evaluate pronounciation
+    # read file and evaluate pronounciation
     file_bytes = await file.read()
     audio_file = io.BytesIO(file_bytes)
     result = evaluate(audio_file, word)
