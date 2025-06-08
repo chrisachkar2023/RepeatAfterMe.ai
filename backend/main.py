@@ -36,7 +36,7 @@ def get_hard_words():
 # root (home page)
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    words = get_medium_words()
+    words = get_easy_words()
     word = random.choice(words)
     return templates.TemplateResponse("index.html", {"request": request, "word": word})
 
