@@ -14,7 +14,7 @@ if (recordBtn.textContent === 'Start Recording') {
     recorder.ondataavailable = e => chunks.push(e.data);
     recorder.start();
     recordBtn.textContent = 'Stop Recording';
-    status.textContent = 'Recording...';
+    textContent = 'Recording...';
     submitBtn.disabled = true;
     audioPlayer.style.display = 'none';
     audioPlayer.src = '';
@@ -24,16 +24,16 @@ if (recordBtn.textContent === 'Start Recording') {
 } else {
     recorder.stop();
     recordBtn.textContent = 'Start Recording';
-    status.textContent = 'Processing audio...';
+    textContent = 'Processing audio...';
 
     recorder.onstop = () => {
     const blob = new Blob(chunks, { type: 'audio/mp3' });
     const audioURL = URL.createObjectURL(blob);
     audioPlayer.src = audioURL;
     audioPlayer.style.display = 'block';
-    status.textContent = 'Recording ready to upload. Submit the form.';
+    textContent = 'Recording ready to upload. Submit the form.';
 
-    // Convert Blob to a File object and set it to the hidden file input
+    // convert Blob to a File object and set it to the hidden file input
     const file = new File([blob], 'recording.mp3', { type: 'audio/mp3' });
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(file);
