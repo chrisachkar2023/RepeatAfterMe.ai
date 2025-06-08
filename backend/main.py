@@ -5,8 +5,13 @@ import random
 from backend.evaluator import evaluate
 import io
 import sqlite3
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+
+# for js files
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
 templates = Jinja2Templates(directory="frontend")
 
 def get_easy_words():
