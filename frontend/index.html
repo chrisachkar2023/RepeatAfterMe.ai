@@ -13,19 +13,29 @@
 <body>
     <h1>RepeatAfterMe.ai</h1>
     <hr>
-    <h2>Word:</h2> {{ word }}
+
+    <!-- choose a difficulty -->
+    <label for="difficulty">Choose a difficulty:</label>
+    <select name="difficulty" id="difficulty">
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+    </select>
+
+    <h2>Word:</h2> 
+    <span id="word">{{ word }}</span>
 
     <h3>Record Audio:</h3>
     <button id="record-btn">Start Recording</button>
     <p id="record-status"></p>
 
-     <audio id="audioPlayer" controls style="display:none;"></audio>
+    <audio id="audioPlayer" controls style="display:none;"></audio>
 
 
     <h3>Upload File:</h3>
     <form action="/upload" method="POST" enctype="multipart/form-data">
-        <!-- hidden input to send the word with the form -->
-        <input type="hidden" name="word" value="{{ word }}">
+        <!-- submit recording/file button -->
+        <input type="hidden" id="hidden-word" name="word" value="{{ word }}">
         <input type="file" name="file" id="fileinput" required> 
         <button type="submit">Submit</button>
     </form>
@@ -38,8 +48,11 @@
         <p>No results yet. Upload a file and try.</p>
     {% endif %}
 
-    <!-- load the external JS file -->
+    <!-- voice recording js file -->
     <script src="/static/recorder.js"></script>
+
+    <!-- difficulty selection js file -->
+     <script src="/static/difficulty.js"></script>
 
 </body>
 </html>

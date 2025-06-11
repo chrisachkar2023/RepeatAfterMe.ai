@@ -1,7 +1,6 @@
 from transformers import pipeline
 import pronouncing
 import difflib
-import librosa
 from pydub import AudioSegment
 import numpy as np
 
@@ -35,7 +34,7 @@ def phoneme_similarity(target_phonemes, transcribed_phonemes):
 def evaluate(audio_path, target_word):
     # load audio and run speech recognition
     audio = load_audio(audio_path)
-    transcription = transcribe(audio)
+    transcription = transcribe(audio).replace(" ", "")
 
     # convert both to phonemes
     target_phonemes = words_to_phonemes(target_word.lower())
@@ -49,5 +48,5 @@ def evaluate(audio_path, target_word):
 
     return {
         "transcription": transcription,
-        "score": round(score, 3)
+        "score": f"{round(score * 100, 2)}%"
     }
