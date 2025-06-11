@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
-# for .js files
+# for external js/css files
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
 templates = Jinja2Templates(directory="frontend")
