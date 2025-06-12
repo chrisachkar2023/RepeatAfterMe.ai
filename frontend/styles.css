@@ -1,4 +1,12 @@
 body {
-  background-color: lightseagreen;
+  background: linear-gradient(to bottom, #59C173, #a17fe0, #5D26C1);
+  height: 100vh;
+  margin: 0;
   font-family: verdana;
+  text-align: center;
+}
+
+#word {
+    font-size: 200px;
+    height: 10vh;
 }
