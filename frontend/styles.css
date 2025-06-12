@@ -1,12 +1,11 @@
 body {
-  background: linear-gradient(to bottom, #59C173, #a17fe0, #5D26C1);
+  background: linear-gradient(to bottom, #667db6, #0082c8, #0082c8, #667db6);
   height: 100vh;
   margin: 0;
-  font-family: verdana;
+  font-family: 'Inter', sans-serif;
   text-align: center;
 }
 
 #word {
-    font-size: 200px;
-    height: 10vh;
+    font-size: 170px;
 }
