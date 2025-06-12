@@ -27,8 +27,9 @@
     <button id="record-btn">Start Recording</button>
     <p id="record-status"></p>
 
-    <audio id="audioPlayer" controls style="display:none;"></audio>
-
+    <div class="centered-audio">
+        <audio id="audioPlayer" controls style="display:none;"></audio>
+    </div>
 
     <h3>Upload File:</h3>
     <form action="/upload" method="POST" enctype="multipart/form-data">
