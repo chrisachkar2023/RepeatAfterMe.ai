@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>RepeatAfterMe.ai</title>
+    
     <!-- css file -->
     <link rel="stylesheet" href="/static/styles.css">
 </head>
@@ -29,10 +30,6 @@
 
     <div class="centered-audio">
         <audio id="audioPlayer" controls style="display:none;"></audio>
-        <!-- show user recorded audio after submit -->
-        {% if audio_data_url %}
-            <audio controls src="{{ audio_data_url }}"></audio>
-        {% endif %} 
     </div>
 
     <h3>Upload File:</h3>
@@ -45,6 +42,12 @@
     <hr>
     <h3>Results:</h3>
     {% if result %}
+        <!-- show user recorded audio after submit -->
+         {% if audio_data_url %}
+            <h4>Your Audio:</h4>
+            <audio controls src="{{ audio_data_url }}"></audio>
+        {% endif %} 
+
         <p><strong>Transcribed Text:</strong> {{ result.transcription }}</p>
         <p><strong>Pronunciation Score:</strong> {{ result.score }}</p>
     {% else %}

@@ -7,11 +7,11 @@ body {
 }
 
 #word {
-    font-size: 170px;
+  font-size: 170px;
 }
 
 .centered-audio {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }
