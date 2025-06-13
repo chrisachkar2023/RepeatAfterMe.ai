@@ -29,6 +29,10 @@
 
     <div class="centered-audio">
         <audio id="audioPlayer" controls style="display:none;"></audio>
+        <!-- show user recorded audio after submit -->
+        {% if audio_data_url %}
+            <audio controls src="{{ audio_data_url }}"></audio>
+        {% endif %} 
     </div>
 
     <h3>Upload File:</h3>

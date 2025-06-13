@@ -6,10 +6,11 @@ from backend.evaluator import evaluate
 import io
 import sqlite3
 from fastapi.staticfiles import StaticFiles
+import base64
 
 app = FastAPI()
 
-# for external js/css files
+# for static frontend files
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
 templates = Jinja2Templates(directory="frontend")
@@ -37,7 +38,16 @@ async def post_form(request: Request, word: str = Form(...), file: UploadFile = 
     audio_file = io.BytesIO(file_bytes)
     result = evaluate(audio_file, word)
     
-    return templates.TemplateResponse("index.html", {"request": request, "word": word, "result": result})
+    # encode audio bytes to base64 string
+    audio_base64 = base64.b64encode(file_bytes).decode('utf-8')
+    audio_data_url = f"data:audio/mp3;base64,{audio_base64}"
+    
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "word": word,
+        "result": result,
+        "audio_data_url": audio_data_url
+    })
 
 # api endpoint to get a random word in difficulty
 @app.get("/api/word", response_class=PlainTextResponse)
