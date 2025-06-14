@@ -44,3 +44,36 @@ body {
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
+.login-container form input ,
+.login-container form button{
+  display: block;
+  margin: 0 auto 20px;
+  width: 250px;
+  padding: 10px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.home-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 120px;
+  height: 40px;
+  background: #111;
+  color: #0ff;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 1rem;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+}
+
+.home-button:hover {
+  background:#005f8a;
+}
