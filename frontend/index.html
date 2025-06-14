@@ -38,7 +38,7 @@
     <form action="/upload" method="POST" enctype="multipart/form-data">
         <!-- submit recording/file button -->
         <input type="hidden" id="hidden-word" name="word" value="{{ word }}">
-        <input type="file" name="file" id="fileinput" required> 
+        <input type="file" name="file" id="fileinput" required accept="audio/*"> 
         <button type="submit">Submit</button>
     </form>
     <hr>
