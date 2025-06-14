@@ -10,6 +10,11 @@ body {
   font-size: 170px;
 }
 
+.centered-audio {
+  display: flex;
+  justify-content: center;
+}
+
 .login-button {
   position: absolute;
   top: 20px;
@@ -31,4 +36,11 @@ body {
 
 .login-button:hover {
   background:#005f8a;
+}
+
+.login-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
