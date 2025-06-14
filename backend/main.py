@@ -2,11 +2,11 @@ from fastapi import FastAPI, Request, Form, UploadFile, File, Response
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi_login import LoginManager
 import random
 import io
 import sqlite3
 import base64
-from fastapi_login import LoginManager
 from backend.evaluator import evaluate
 
 app = FastAPI()

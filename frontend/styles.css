@@ -10,8 +10,25 @@ body {
   font-size: 170px;
 }
 
-.centered-audio {
+.login-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 120px;
+  height: 40px;
+  background: #111;
+  color: #0ff;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 1rem;
+  text-decoration: none;
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  align-items: center;
+  border: none;
+}
+
+.login-button:hover {
+  background:#005f8a;
 }
