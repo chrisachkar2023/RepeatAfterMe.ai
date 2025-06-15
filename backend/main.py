@@ -8,6 +8,7 @@ import io
 import sqlite3
 import base64
 from backend.evaluator import evaluate
+from passlib.context import CryptContext
 
 app = FastAPI()
 
@@ -15,17 +16,21 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
 templates = Jinja2Templates(directory="frontend")
 
-# Dummy user database
-DB_USERS = {
-    "admin": {"username": "admin", "password": "password"}
-}
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 manager = LoginManager("your-secret-key", token_url="/login", use_cookie=True)
 manager.cookie_name = "auth_token"
 
 @manager.user_loader
 def load_user(username: str):
-    return DB_USERS.get(username)
+    conn = sqlite3.connect("backend/users.db")  # <-- Connect to your users DB
+    cursor = conn.cursor()
+    cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
+    row = cursor.fetchone()
+    conn.close()
+    if row:
+        return {"username": row[0]}
+    return None
 
 # Returns a random word from a desired difficulty
 def get_random_word_by_difficulty(difficulty: str):
@@ -74,14 +79,29 @@ async def login_post(
     response: Response,
     username: str = Form(...),
     password: str = Form(...)
-):
-    user = DB_USERS.get(username)
-    if not user or user["password"] != password:
+):    
+    conn = sqlite3.connect("backend/users.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT password_hash FROM users WHERE username = ?", (username,))
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+      
+    if not row:
         return templates.TemplateResponse(
             "login.html",
             {"request": request, "error": "Invalid credentials"},
             status_code=401
         )
+    stored_hash = row[0]
+    
+    if not pwd_context.verify(password, stored_hash):  
+        return templates.TemplateResponse(
+            "login.html",
+            {"request": request, "error": "Invalid credentials"},
+            status_code=401
+        )
+        
     access_token = manager.create_access_token(data={"sub": username})
     manager.set_cookie(response, access_token)
     # Must return the Response object to send cookie and redirect
@@ -91,3 +111,13 @@ async def login_post(
 @app.get("/main", response_class=HTMLResponse)
 async def main_page(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "word": get_random_word_by_difficulty("easy")})
+
+
+@app.get("/test-users")
+def test_users():
+    conn = sqlite3.connect("backend/users.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT username FROM users")
+    users = [row[0] for row in cursor.fetchall()]
+    conn.close()
+    return {"users": users}
