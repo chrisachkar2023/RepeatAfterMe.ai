@@ -13,7 +13,9 @@
   <a href="/" class="home-button">Home</a>
 
   {% if error %}
-    <p style="color:red;">{{ error }}</p>
+    <div class="error-text">
+      {{ error }}
+    </div>
   {% endif %}
   <div class="login-container">
     <form method="post" action="/login">

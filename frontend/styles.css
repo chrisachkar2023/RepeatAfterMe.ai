@@ -55,6 +55,19 @@ body {
   box-sizing: border-box;
 }
 
+.error-text {
+  background-color: rgba(245, 1, 1, 0.5);
+  color: white;     
+  padding: 10px 15px;  
+  border-radius: 5px;    
+  display: inline-block;
+  text-align: center;
+  margin: 20px auto;
+  width: fit-content;
+  position: relative;
+  top: 100px;
+}
+
 .home-button {
   position: absolute;
   top: 20px;
