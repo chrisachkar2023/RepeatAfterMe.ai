@@ -15,6 +15,51 @@ body {
   justify-content: center;
 }
 
+.welcome-text {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  height: 40px;
+  color: white;
+  font-weight: bold;
+  font-style: italic;
+  font-size: 1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  margin: 0;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /* rainbow animated background */
+  background: linear-gradient(
+    270deg,
+    blue,
+    indigo,
+    violet
+  );
+  background-size: 1400% 1400%;
+  animation: rainbowBG 10s ease infinite;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+@keyframes rainbowBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
 .login-button {
   position: absolute;
   top: 20px;

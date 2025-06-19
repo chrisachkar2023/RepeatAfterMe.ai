@@ -12,11 +12,11 @@
 
     <!-- login button -->
     {% if not username %}
-        <p class="not-logged-in">You are not logged in.</p>
+        <p class="welcome-text">You are not logged in.</p>
         <a href="/login" class="login-button">Login</a>
     {% else %}
         <p class="welcome-text">Welcome, {{ username }}.</p>
-        <a href="/logout" class="logout-button">Logout</a>
+        <a href="/logout" class="login-button">Logout</a>
     {% endif %}
 
     <!-- choose a difficulty -->
