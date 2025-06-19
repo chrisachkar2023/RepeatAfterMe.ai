@@ -2,34 +2,33 @@ from fastapi import FastAPI, Request, Form, UploadFile, File, Response
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi_login import LoginManager
 import random
 import io
 import sqlite3
 import base64
 from backend.evaluator import evaluate
 from passlib.context import CryptContext
+from itsdangerous import URLSafeSerializer
 
 app = FastAPI()
 
-# for static frontend files
+# for frontend files
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
 templates = Jinja2Templates(directory="frontend")
 
+SECRET_KEY = "super-secret-key"
+serializer = URLSafeSerializer(SECRET_KEY)
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-manager = LoginManager("your-secret-key", token_url="/login", use_cookie=True)
-manager.cookie_name = "auth_token"
-
-@manager.user_loader
-def load_user(username: str):
-    conn = sqlite3.connect("backend/users.db")  # <-- Connect to your users DB
-    cursor = conn.cursor()
-    cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
-    row = cursor.fetchone()
-    conn.close()
-    if row:
-        return {"username": row[0]}
+def get_username_from_cookie(request: Request):
+    cookie = request.cookies.get("session")
+    if cookie:
+        try:
+            username = serializer.loads(cookie)
+            return username
+        except Exception:
+            return None
     return None
 
 # Returns a random word from a desired difficulty
@@ -41,11 +40,17 @@ def get_random_word_by_difficulty(difficulty: str):
     connect.close()
     return random.choice(words)
 
+
 # Root (home page)
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     word = get_random_word_by_difficulty("easy")
-    return templates.TemplateResponse("index.html", {"request": request, "word": word})
+    username = get_username_from_cookie(request)
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "username": username,
+        "word": word
+    })
 
 # Form post handler
 @app.post("/upload", response_class=HTMLResponse)
@@ -55,8 +60,10 @@ async def post_form(request: Request, word: str = Form(...), file: UploadFile = 
     result = evaluate(audio_file, word)
     audio_base64 = base64.b64encode(file_bytes).decode('utf-8')
     audio_data_url = f"data:audio/mp3;base64,{audio_base64}"
+    username = get_username_from_cookie(request)
     return templates.TemplateResponse("index.html", {
         "request": request,
+        "username": username,
         "word": word,
         "result": result,
         "audio_data_url": audio_data_url
@@ -84,34 +91,29 @@ async def login_post(
     cursor = conn.cursor()
     cursor.execute("SELECT password_hash FROM users WHERE username = ?", (username,))
     row = cursor.fetchone()
-    cursor.close()
     conn.close()
-      
+
     if not row:
-        return templates.TemplateResponse(
-            "login.html",
-            {"request": request, "error": "Invalid credentials"},
-            status_code=401
-        )
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
+
     stored_hash = row[0]
-    
-    if not pwd_context.verify(password, stored_hash):  
-        return templates.TemplateResponse(
-            "login.html",
-            {"request": request, "error": "Invalid credentials"},
-            status_code=401
-        )
-        
-    access_token = manager.create_access_token(data={"sub": username})
-    manager.set_cookie(response, access_token)
-    # Must return the Response object to send cookie and redirect
-    return RedirectResponse(url="/", status_code=302)
 
-# Main page after login (can customize as needed)
-@app.get("/main", response_class=HTMLResponse)
-async def main_page(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "word": get_random_word_by_difficulty("easy")})
+    if not pwd_context.verify(password, stored_hash):
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
 
+    # Create a signed cookie
+    session_cookie = serializer.dumps(username)
+    response = RedirectResponse(url="/", status_code=302)
+    response.set_cookie(key="session", value=session_cookie, httponly=True)
+
+    return response
+
+# logout route
+@app.get("/logout")
+async def logout():
+    response = RedirectResponse(url="/", status_code=302)
+    response.delete_cookie(key="session")
+    return response
 
 @app.get("/test-users")
 def test_users():

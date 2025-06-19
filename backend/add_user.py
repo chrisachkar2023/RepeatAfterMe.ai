@@ -19,4 +19,4 @@ def add_user(username, password):
     print(f"User '{username}' added successfully!")
 
 if __name__ == "__main__":
-    add_user("frick", "newpassword123")
+    add_user("a", "b")
