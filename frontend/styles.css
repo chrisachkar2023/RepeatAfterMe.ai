@@ -34,31 +34,9 @@ body {
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
-
-  /* rainbow animated background */
-  background: linear-gradient(
-    270deg,
-    blue,
-    indigo,
-    violet
-  );
-  background-size: 1400% 1400%;
-  animation: rainbowBG 10s ease infinite;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  background: transparent;
+  border: 2px solid white;
 }
-
-@keyframes rainbowBG {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 
 .login-button {
   position: absolute;
@@ -80,6 +58,29 @@ body {
 }
 
 .login-button:hover {
+  background:#005f8a;
+}
+
+.signup-button {
+  position: absolute;
+  top: 20px;
+  right: 150px;
+  width: 120px;
+  height: 40px;
+  background: #111;
+  color: #0ff;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 1rem;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+}
+
+.signup-button:hover {
   background:#005f8a;
 }
 

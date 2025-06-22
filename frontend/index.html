@@ -14,6 +14,7 @@
     {% if not username %}
         <p class="welcome-text">You are not logged in.</p>
         <a href="/login" class="login-button">Login</a>
+        <a href="/signup" class="signup-button">Sign Up</a>
     {% else %}
         <p class="welcome-text">Welcome, {{ username }}.</p>
         <a href="/logout" class="login-button">Logout</a>

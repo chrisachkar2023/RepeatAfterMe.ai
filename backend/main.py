@@ -115,6 +115,11 @@ async def logout():
     response.delete_cookie(key="session")
     return response
 
+# sign up page GET
+@app.get("/signup", response_class=HTMLResponse)
+async def login_get(request: Request):
+    return templates.TemplateResponse("signup.html", {"request": request})
+
 @app.get("/test-users")
 def test_users():
     conn = sqlite3.connect("backend/users.db")
