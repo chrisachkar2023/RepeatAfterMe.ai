@@ -6,9 +6,9 @@ import random
 import io
 import sqlite3
 import base64
-from backend.evaluator import evaluate
 from passlib.context import CryptContext
 from itsdangerous import URLSafeSerializer
+from backend.evaluator import evaluate
 from backend.add_user import add_user
 
 app = FastAPI()
@@ -121,13 +121,23 @@ async def logout():
 async def signup_get(request: Request):
     return templates.TemplateResponse("signup.html", {"request": request})
 
+# sign up page POST
 @app.post("/signup")
 async def signup_post(
     request: Request,
     response: Response,
     username: str = Form(...),
-    password: str = Form(...)
+    password: str = Form(...),
+    confirm_password: str = Form(...)
 ):
+    # checks if password was entered correctly twice
+    if password != confirm_password:
+        return templates.TemplateResponse("signup.html", {
+            "request": request,
+            "error": "Passwords do not match"
+        })
+    
+    # tries to add user to db
     success = add_user(username, password)
     if not success:
         return templates.TemplateResponse("signup.html", {
