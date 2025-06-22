@@ -9,6 +9,7 @@ import base64
 from backend.evaluator import evaluate
 from passlib.context import CryptContext
 from itsdangerous import URLSafeSerializer
+from backend.add_user import add_user
 
 app = FastAPI()
 
@@ -117,8 +118,27 @@ async def logout():
 
 # sign up page GET
 @app.get("/signup", response_class=HTMLResponse)
-async def login_get(request: Request):
+async def signup_get(request: Request):
     return templates.TemplateResponse("signup.html", {"request": request})
+
+@app.post("/signup")
+async def signup_post(
+    request: Request,
+    response: Response,
+    username: str = Form(...),
+    password: str = Form(...)
+):
+    success = add_user(username, password)
+    if not success:
+        return templates.TemplateResponse("signup.html", {
+            "request": request,
+            "error": "Username already exists"
+        })
+
+    session_cookie = serializer.dumps(username)
+    response = RedirectResponse(url="/", status_code=302)
+    response.set_cookie(key="session", value=session_cookie, httponly=True)
+    return response
 
 @app.get("/test-users")
 def test_users():
