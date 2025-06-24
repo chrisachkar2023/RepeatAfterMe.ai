@@ -8,6 +8,7 @@ import sqlite3
 import base64
 from passlib.context import CryptContext
 from itsdangerous import URLSafeSerializer
+from gtts import gTTS
 from backend.evaluator import evaluate
 from backend.add_user import add_user
 
@@ -56,18 +57,30 @@ async def read_root(request: Request):
 # Form post handler
 @app.post("/upload", response_class=HTMLResponse)
 async def post_form(request: Request, word: str = Form(...), file: UploadFile = File(...)):
+    # user submitted audio file
     file_bytes = await file.read()
     audio_file = io.BytesIO(file_bytes)
     result = evaluate(audio_file, word)
     audio_base64 = base64.b64encode(file_bytes).decode('utf-8')
     audio_data_url = f"data:audio/mp3;base64,{audio_base64}"
+    
+    # generate text-to-speech audio for the correct pronunciation
+    tts = gTTS(text=word, lang='en')
+    tts_fp = io.BytesIO()
+    tts.write_to_fp(tts_fp)
+    tts_fp.seek(0)
+    tts_audio_base64 = base64.b64encode(tts_fp.read()).decode('utf-8')
+    tts_audio_data_url = f"data:audio/mpeg;base64,{tts_audio_base64}"
+    
     username = get_username_from_cookie(request)
+    
     return templates.TemplateResponse("index.html", {
         "request": request,
         "username": username,
         "word": word,
         "result": result,
-        "audio_data_url": audio_data_url
+        "audio_data_url": audio_data_url,
+        "tts_audio_data_url": tts_audio_data_url
     })
 
 # API endpoint to get a random word by difficulty

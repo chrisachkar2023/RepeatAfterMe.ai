@@ -52,11 +52,16 @@
     <hr>
     <h3>Results:</h3>
     {% if result %}
-        <!-- show user recorded audio after submit -->
+        <!-- user submitted audio -->
          {% if audio_data_url %}
             <h4>Your Audio:</h4>
             <audio controls src="{{ audio_data_url }}"></audio>
-        {% endif %} 
+        {% endif %}
+        <!-- correct pronouncation -->
+        {% if tts_audio_data_url %}
+             <h4>Correct Audio:</h4>
+            <audio controls src="{{ tts_audio_data_url }}"></audio>
+        {% endif %}
 
         <p><strong>Transcribed Text:</strong> {{ result.transcription }}</p>
         <p><strong>Pronunciation Score:</strong> {{ result.score }}</p>
