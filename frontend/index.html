@@ -14,9 +14,9 @@
         <h1>Practice</h1>
     </div>
 
-    <!-- choose a difficulty -->
+    <!-- difficulty dropdown -->
     <label for="difficulty">Choose a difficulty:</label>
-    <select name="difficulty" id="difficulty">
+    <select name="difficulty" id="difficulty" class="primary">
         <option value="Easy">Easy</option>
         <option value="Medium">Medium</option>
         <option value="Hard">Hard</option>
@@ -40,8 +40,8 @@
     <form action="/upload" method="POST" enctype="multipart/form-data">
         <!-- submit recording/file button -->
         <input type="hidden" id="hidden-word" name="word" value="{{ word }}">
-        <input type="file" name="file" id="fileinput" required accept="audio/*"> 
-        <button type="submit">Submit</button>
+        <input type="file" name="file" id="fileinput" required accept="audio/*" class="primary"> 
+        <button type="submit" class="primary">Submit</button>
     </form>
     <hr>
     <h3>Results:</h3>
