@@ -42,9 +42,8 @@ body {
 
 .primary:hover {
   background-color: white;
-  color: #1F1F1F; /* dark text on white background */
+  color: #1F1F1F;
 }
-
 
 .nav-links a {
   color: white;
