@@ -1,52 +1,65 @@
 from transformers import pipeline
-import pronouncing
-import difflib
-from pydub import AudioSegment
 import numpy as np
+from g2p_en import G2p
+import pronouncing
+from panphon.distance import Distance
+from pydub import AudioSegment
 
-# initialize automatic speech recognition (ASR) pipeline
+# Initialize Pipeline
 asr = pipeline("automatic-speech-recognition", model="facebook/wav2vec2-base-960h")
+g2p = G2p()
+d = Distance()
 
-# loads input audio
-def load_audio(unprocessed_audio):
-    audio = AudioSegment.from_file(unprocessed_audio)
-    audio = audio.set_channels(1).set_frame_rate(16000) # change rate per model
+# Load and preprocess audio
+def load_audio(file_obj):
+    audio = AudioSegment.from_file(file_obj)
+    audio = audio.set_channels(1).set_frame_rate(16000)
     samples = np.array(audio.get_array_of_samples()).astype(np.float32)
     samples /= 32768.0
     return samples
 
-# uses ASR pipeline to transcribe audio
 def transcribe(audio):
     result = asr(audio)
-    return result['text'].lower().strip()
+    return result['text'].strip().lower()
 
-# looks up phoneme spelling of a word
+# Convert any word into phonemes
 def words_to_phonemes(word):
     phones = pronouncing.phones_for_word(word)
-    return phones[0] if phones else ""
+    if phones:
+        return phones[0]  # from CMU dictionary
+    else:
+        return generate_phonemes(word)  # fallback to g2p
 
-# calculates similiarty ratio between the target and transcribed phonemes
+# G2P fallback for unknown/garbled words
+def generate_phonemes(text):
+    g2p_output = g2p(text)
+    return " ".join([p for p in g2p_output if p.strip() and not p.isspace()])
+
+# Compare phoneme similarity using normalized Levenshtein
 def phoneme_similarity(target_phonemes, transcribed_phonemes):
-    similarity = difflib.SequenceMatcher(None, target_phonemes.split(), transcribed_phonemes.split())
-    return similarity.ratio()
+    dist = d.levenshtein_distance(target_phonemes, transcribed_phonemes)
+    max_len = max(len(target_phonemes.split()), 1)
+    similarity = max(0.0, 1 - dist / max_len)
+    return similarity
 
-# evaluates pronouncation
+# Full evaluation
 def evaluate(audio_path, target_word):
-    # load audio and run speech recognition
     audio = load_audio(audio_path)
     transcription = transcribe(audio).replace(" ", "")
-
-    # convert both to phonemes
+    
+    # Phoneme conversion
     target_phonemes = words_to_phonemes(target_word.lower())
-    transcribed_phonemes = words_to_phonemes(transcription)
+    transcribed_phonemes = generate_phonemes(transcription)
 
-    # use phoneme similarity if possible, otherwise text comparison
     if not target_phonemes or not transcribed_phonemes:
-        score = difflib.SequenceMatcher(None, target_word.lower(), transcription).ratio()
+        score = 0.0
     else:
         score = phoneme_similarity(target_phonemes, transcribed_phonemes)
 
     return {
+        "target_word": target_word,
         "transcription": transcription,
+        "target_phonemes": target_phonemes,
+        "transcribed_phonemes": transcribed_phonemes,
         "score": f"{round(score * 100, 2)}%"
     }
