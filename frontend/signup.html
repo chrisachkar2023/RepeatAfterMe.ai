@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
-
-  <!-- css file -->
+  <meta charset="UTF-8"/>
+  <title>Sign Up</title>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <h1>Sign Up</h1>
-  <hr>
+  {% include "nav.html" %}
 
-  <a href="/" class="home-button">Home</a>
+  <div class="page-title">
+    <h1>Sign Up</h1>
+  </div>
 
   <div class="login-container">
     {% if error %}

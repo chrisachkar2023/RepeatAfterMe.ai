@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="site-name">RepeatAfterMe.ai</div>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            {% if not username %}
+                <a href="/login">Login</a>
+                <a href="/signup">Sign Up</a>
+            {% else %}
+                <a href="/logout">Logout</a>
+            {% endif %}
+        </nav>
+    </div>
+</body>
+</html>

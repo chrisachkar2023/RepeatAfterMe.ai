@@ -1,24 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8"/>
     <title>RepeatAfterMe.ai</title>
-
     <!-- css file -->
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>RepeatAfterMe.ai</h1>
-    <hr>
+    <!-- navigation bar -->
+    {% include "nav.html" %}
 
-    <!-- login button -->
-    {% if not username %}
-        <p class="welcome-text">You are not logged in.</p>
-        <a href="/login" class="login-button">Login</a>
-        <a href="/signup" class="signup-button">Sign Up</a>
-    {% else %}
-        <p class="welcome-text">Welcome, {{ username }}.</p>
-        <a href="/logout" class="login-button">Logout</a>
-    {% endif %}
+    <div class="page-title">
+        <h1>Practice</h1>
+    </div>
 
     <!-- choose a difficulty -->
     <label for="difficulty">Choose a difficulty:</label>
@@ -32,10 +26,10 @@
     <span id="word">{{ word }}</span>
 
     <br> <br>
-    <button id="change-word-btn">Change Word</button>
+    <button id="change-word-btn" class="primary">Change Word</button>
 
     <h3>Record Audio:</h3>
-    <button id="record-btn">Start Recording</button>
+    <button id="record-btn" class="primary">Start Recording</button>
     <p id="record-status"></p>
 
     <div class="centered-audio">
@@ -59,7 +53,7 @@
         {% endif %}
         <!-- correct pronouncation -->
         {% if tts_audio_data_url %}
-             <h4>Correct Audio:</h4>
+            <h4>Correct Audio:</h4>
             <audio controls src="{{ tts_audio_data_url }}"></audio>
         {% endif %}
 
