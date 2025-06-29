@@ -127,29 +127,6 @@ body {
   width: fit-content;
 }
 
-.home-button {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 120px;
-  height: 40px;
-  background: #111;
-  color: #0ff;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 8px;
-  font-size: 1rem;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: none;
-}
-
-.home-button:hover {
-  background:#005f8a;
-}
-
 .error-404 {
   display: flex;
   justify-content: center;
