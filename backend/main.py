@@ -177,7 +177,10 @@ def test_users():
     conn.close()
     return {"users": users}
 
-# catch-all route (stops user from typing random path)
+# error 404 catch-all route (prevents crashes when user types random paths)
+# MUST BE PLACED AT BOTTOM
 @app.get("/{full_path:path}")
-async def catch_all(full_path: str):
-    return RedirectResponse(url="/", status_code=302)
+async def catch_all(request: Request, full_path: str):
+    return templates.TemplateResponse("404.html", 
+                                      {"request": request},
+                                      status_code=404)
