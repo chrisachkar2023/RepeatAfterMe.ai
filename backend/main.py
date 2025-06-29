@@ -33,7 +33,6 @@ def get_username_from_cookie(request: Request):
             return None
     return None
 
-# Returns a random word from a desired difficulty
 def get_random_word_by_difficulty(difficulty: str):
     connect = sqlite3.connect("backend/words.db")
     cursor = connect.cursor()
@@ -43,7 +42,7 @@ def get_random_word_by_difficulty(difficulty: str):
     return random.choice(words)
 
 
-# Root (home page)
+# root (home page)
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     word = get_random_word_by_difficulty("easy")
@@ -53,10 +52,15 @@ async def read_root(request: Request):
         "username": username,
         "word": word
     })
+    
+# /upload GET (returns to homepage)
+@app.get("/upload", response_class=HTMLResponse)
+async def upload_get():
+    return RedirectResponse("/", status_code=303)
 
-# Form post handler
+# /upload POST
 @app.post("/upload", response_class=HTMLResponse)
-async def post_form(request: Request, word: str = Form(...), file: UploadFile = File(...)):
+async def upload_post(request: Request, word: str = Form(...), file: UploadFile = File(...)):  
     # user submitted audio file
     file_bytes = await file.read()
     audio_file = io.BytesIO(file_bytes)
@@ -163,6 +167,7 @@ async def signup_post(
     response.set_cookie(key="session", value=session_cookie, httponly=True)
     return response
 
+# displays current users
 @app.get("/test-users")
 def test_users():
     conn = sqlite3.connect("backend/users.db")
@@ -171,3 +176,8 @@ def test_users():
     users = [row[0] for row in cursor.fetchall()]
     conn.close()
     return {"users": users}
+
+# catch-all route (stops user from typing random path)
+@app.get("/{full_path:path}")
+async def catch_all(full_path: str):
+    return RedirectResponse(url="/", status_code=302)

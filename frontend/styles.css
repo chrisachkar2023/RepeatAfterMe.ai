@@ -13,16 +13,6 @@ body {
   font-weight: bold;
 }
 
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #1F1F1F;
-  padding: 10px 20px;
-  font-family: Arial, sans-serif;
-  height: 35px;
-}
-
 .site-name {
   color: white;
   font-weight: bold;
@@ -43,6 +33,17 @@ body {
 .primary:hover {
   background-color: white;
   color: #1F1F1F;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1F1F1F;
+  color: white;
+  padding: 10px 20px;
+  font-family: Arial, sans-serif;
+  height: 35px;
 }
 
 .nav-links a {
