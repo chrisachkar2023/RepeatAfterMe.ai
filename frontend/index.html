@@ -36,10 +36,9 @@
     </div>
 
     <h3>Upload File:</h3>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <!-- submit recording/file button -->
+    <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
         <input type="hidden" id="hidden-word" name="word" value="{{ word }}">
-        <input type="file" name="file" id="fileinput" required accept="audio/*" class="primary"> 
+        <input type="file" name="file" id="fileinput" required accept="audio/*" class="primary" style="display: none;"> 
         <button type="submit" class="primary">Submit</button>
     </form>
     <hr>
@@ -55,7 +54,6 @@
             <h4>Correct Audio:</h4>
             <audio controls src="{{ tts_audio_data_url }}"></audio>
         {% endif %}
-
         <p><strong>Transcribed Text:</strong> {{ result.transcription }}</p>
         <p><strong>Pronunciation Score:</strong> {{ result.score }}</p>
     {% else %}
@@ -66,7 +64,9 @@
     <script src="/static/recorder.js"></script>
 
     <!-- difficulty selection js file -->
-     <script src="/static/difficulty.js"></script>
+    <script src="/static/difficulty.js"></script>
 
+    <!-- stops user from uploading nothing -->
+    <script src="/static/uploadGuard.js"></script>
 </body>
 </html>
