@@ -5,7 +5,16 @@
 </head>
 <body>
     <div class="navbar">
+        <div class="signed-in-text">
+            {% if username %}
+                <p>Welcome back, {{ username }}!</p>
+            {% else %}
+                <p>Practice makes perfect.</p>
+            {% endif %}
+        </div>
+
         <div class="site-name">RepeatAfterMe.ai</div>
+
         <nav class="nav-links">
             <a href="/">Home</a>
             {% if not username %}

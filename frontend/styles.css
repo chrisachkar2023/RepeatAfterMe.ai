@@ -13,12 +13,6 @@ body {
   font-weight: bold;
 }
 
-.site-name {
-  color: white;
-  font-weight: bold;
-  font-size: 1.3em;
-}
-
 /* most buttons are primary */
 .primary {
   background-color: transparent;
@@ -55,6 +49,22 @@ body {
 .secondary:hover {
   background-color: #1c5f9d;
   color: white;
+}
+
+.signed-in-text {
+  text-align: left;
+  padding-left: 0;
+  margin-left: 0;
+  font-weight: bold;
+}
+
+.site-name {
+  color: white;
+  font-weight: bold;
+  font-size: 1.3em;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .navbar {
