@@ -156,6 +156,15 @@ body {
   box-sizing: border-box;
 }
 
+.login-switch-text {
+  text-decoration: none; 
+  color: #267DD0
+}
+
+.login-switch-text:hover {
+  text-decoration: underline; 
+}
+
 .error-text {
   background-color: rgba(245, 1, 1, 0.5);
   color: white;     
