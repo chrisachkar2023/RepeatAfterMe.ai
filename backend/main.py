@@ -13,6 +13,7 @@ from backend.evaluator import evaluate
 from backend.add_user import add_user
 
 app = FastAPI()
+upload_results_cache = {}
 
 # for frontend files
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
@@ -53,39 +54,51 @@ async def read_root(request: Request):
         "word": word
     })
     
-# /upload GET (returns to homepage)
-@app.get("/upload", response_class=HTMLResponse)
-async def upload_get():
-    return RedirectResponse("/", status_code=303)
-
-# /upload POST
-@app.post("/upload", response_class=HTMLResponse)
-async def upload_post(request: Request, word: str = Form(...), file: UploadFile = File(...)):  
-    # user submitted audio file
+@app.post("/upload")
+async def upload_post(request: Request, word: str = Form(...), file: UploadFile = File(...)):
     file_bytes = await file.read()
     audio_file = io.BytesIO(file_bytes)
     result = evaluate(audio_file, word)
     audio_base64 = base64.b64encode(file_bytes).decode('utf-8')
     audio_data_url = f"data:audio/mp3;base64,{audio_base64}"
-    
-    # generate text-to-speech audio for the correct pronunciation
+
     tts = gTTS(text=word, lang='en')
     tts_fp = io.BytesIO()
     tts.write_to_fp(tts_fp)
     tts_fp.seek(0)
     tts_audio_base64 = base64.b64encode(tts_fp.read()).decode('utf-8')
     tts_audio_data_url = f"data:audio/mpeg;base64,{tts_audio_base64}"
-    
+
     username = get_username_from_cookie(request)
-    
-    return templates.TemplateResponse("index.html", {
-        "request": request,
+
+    import uuid
+    session_id = str(uuid.uuid4())
+    upload_results_cache[session_id] = {
         "username": username,
         "word": word,
         "result": result,
         "audio_data_url": audio_data_url,
         "tts_audio_data_url": tts_audio_data_url
+    }
+
+    return RedirectResponse(url=f"/results/{session_id}", status_code=303)
+
+@app.get("/results/{session_id}", response_class=HTMLResponse)
+async def show_results(request: Request, session_id: str):
+    data = upload_results_cache.get(session_id)
+    if not data:
+        # If no data found, redirect to root or show error page
+        return RedirectResponse("/", status_code=303)
+
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "username": data["username"],
+        "word": data["word"],
+        "result": data["result"],
+        "audio_data_url": data["audio_data_url"],
+        "tts_audio_data_url": data["tts_audio_data_url"],
     })
+
 
 # API endpoint to get a random word by difficulty
 @app.get("/api/word", response_class=PlainTextResponse)
