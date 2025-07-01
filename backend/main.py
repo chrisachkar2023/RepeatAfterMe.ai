@@ -87,9 +87,11 @@ async def upload_post(request: Request, word: str = Form(...), file: UploadFile 
 async def show_results(request: Request, session_id: str):
     data = upload_results_cache.get(session_id)
     if not data:
-        # If no data found, redirect to root or show error page
-        return RedirectResponse("/", status_code=303)
-
+        # if no data found: error 404
+        return templates.TemplateResponse("404.html", 
+                                      {"request": request},
+                                      status_code=404)
+    # return regular results if data was found
     return templates.TemplateResponse("index.html", {
         "request": request,
         "username": data["username"],
