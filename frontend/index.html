@@ -13,19 +13,21 @@
         <h1>Practice</h1>
     </div>
 
-    <!-- difficulty dropdown -->
-    <label for="difficulty">Choose a difficulty:</label>
-    <select name="difficulty" id="difficulty" class="primary">
-        <option value="Easy">Easy</option>
-        <option value="Medium">Medium</option>
-        <option value="Hard">Hard</option>
-    </select>
-    
+    <!-- Difficulty dropdown-->
+    <form id="difficulty-form">
+        <label for="difficulty">Choose a difficulty:</label>
+        <select id="difficulty" class="primary">
+            <option value="easy" {% if difficulty == "easy" %}selected{% endif %}>Easy</option>
+            <option value="medium" {% if difficulty == "medium" %}selected{% endif %}>Medium</option>
+            <option value="hard" {% if difficulty == "hard" %}selected{% endif %}>Hard</option>
+        </select>
+    </form>
+
     <br>
     <span id="word">{{ word }}</span>
 
-    <br> <br>
-    <button id="change-word-btn" class="primary">Change Word</button>
+    <br><br>
+    <button id="change-word-btn" class="primary" onclick="refreshWord()">Change Word</button>
 
     <h3>Record Audio:</h3>
     <button id="record-btn" class="primary">Start Recording</button>
@@ -36,20 +38,22 @@
     </div>
 
     <h3>Upload File:</h3>
+    <!-- Correct upload form (only one) -->
     <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
         <input type="hidden" id="hidden-word" name="word" value="{{ word }}">
-        <input type="file" name="file" id="fileinput" required accept="audio/*" class="primary" style="display: none;"> 
+        <input type="hidden" id="hidden-difficulty" name="difficulty" value="{{ difficulty }}"> 
+
+        <input type="file" name="file" id="fileinput" required accept="audio/*" class="primary" style="display: none;">
         <button type="submit" class="primary">Submit</button>
     </form>
+
     <hr>
     <h3>Results:</h3>
     {% if result %}
-        <!-- user submitted audio -->
-         {% if audio_data_url %}
+        {% if audio_data_url %}
             <h4>Your Audio:</h4>
             <audio controls src="{{ audio_data_url }}"></audio>
         {% endif %}
-        <!-- correct pronouncation -->
         {% if tts_audio_data_url %}
             <h4>Correct Audio:</h4>
             <audio controls src="{{ tts_audio_data_url }}"></audio>
@@ -60,13 +64,20 @@
         <p>No results yet. Upload a file and try.</p>
     {% endif %}
 
-    <!-- voice recording js file -->
+    <!-- Scripts -->
     <script src="/static/recorder.js"></script>
-
-    <!-- difficulty selection js file -->
     <script src="/static/difficulty.js"></script>
 
-    <!-- stops user from uploading nothing -->
-    <script src="/static/uploadGuard.js"></script>
+    <script>
+        document.getElementById("upload-form").addEventListener("submit", function () {
+            const selectedDifficulty = document.getElementById("difficulty").value;
+            document.getElementById("hidden-difficulty").value = selectedDifficulty;
+        });
+
+        function refreshWord() {
+            const diff = document.getElementById("difficulty").value;
+            window.location.href = `/?difficulty=${diff}`;
+}
+    </script>
 </body>
 </html>

@@ -46,16 +46,18 @@ def get_random_word_by_difficulty(difficulty: str):
 # root (home page)
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    word = get_random_word_by_difficulty("easy")
+    difficulty = request.query_params.get("difficulty", "easy")
+    word = get_random_word_by_difficulty(difficulty)
     username = get_username_from_cookie(request)
     return templates.TemplateResponse("index.html", {
         "request": request,
         "username": username,
-        "word": word
+        "word": word,
+        "difficulty": difficulty
     })
     
 @app.post("/upload")
-async def upload_post(request: Request, word: str = Form(...), file: UploadFile = File(...)):
+async def upload_post(request: Request, word: str = Form(...), difficulty: str = Form(...), file: UploadFile = File(...)):
     file_bytes = await file.read()
     audio_file = io.BytesIO(file_bytes)
     result = evaluate(audio_file, word)
@@ -78,7 +80,8 @@ async def upload_post(request: Request, word: str = Form(...), file: UploadFile 
         "word": word,
         "result": result,
         "audio_data_url": audio_data_url,
-        "tts_audio_data_url": tts_audio_data_url
+        "tts_audio_data_url": tts_audio_data_url,
+        "difficulty": difficulty
     }
 
     return RedirectResponse(url=f"/results/{session_id}", status_code=303)
@@ -99,6 +102,7 @@ async def show_results(request: Request, session_id: str):
         "result": data["result"],
         "audio_data_url": data["audio_data_url"],
         "tts_audio_data_url": data["tts_audio_data_url"],
+        "difficulty": data["difficulty"]
     })
 
 
