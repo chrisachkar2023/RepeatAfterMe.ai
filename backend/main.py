@@ -46,7 +46,7 @@ def get_random_word_by_difficulty(difficulty: str):
 # root (home page)
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    difficulty = request.query_params.get("difficulty", "easy")
+    difficulty = request.query_params.get("difficulty") or request.cookies.get("difficulty") or "easy"
     word = get_random_word_by_difficulty(difficulty)
     username = get_username_from_cookie(request)
     return templates.TemplateResponse("index.html", {

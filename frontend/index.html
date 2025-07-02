@@ -68,16 +68,6 @@
     <script src="/static/recorder.js"></script>
     <script src="/static/difficulty.js"></script>
 
-    <script>
-        document.getElementById("upload-form").addEventListener("submit", function () {
-            const selectedDifficulty = document.getElementById("difficulty").value;
-            document.getElementById("hidden-difficulty").value = selectedDifficulty;
-        });
-
-        function refreshWord() {
-            const diff = document.getElementById("difficulty").value;
-            window.location.href = `/?difficulty=${diff}`;
-}
-    </script>
+  
 </body>
 </html>
