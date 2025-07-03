@@ -56,10 +56,18 @@ def evaluate(audio_path, target_word):
     else:
         score = phoneme_similarity(target_phonemes, transcribed_phonemes)
 
+    percentage = round(score * 100, 2)
+    if percentage <= 20:
+        feedback = "😞 Bad Pronunciation"
+    elif percentage <= 50:
+        feedback = "🛠️ Pronunciation Needs Improvement"
+    elif percentage <= 75:
+        feedback = "🙂 Good Pronunciation"
+    else:
+        feedback = "🌟 Perfect Pronunciation"
+        
     return {
         "target_word": target_word,
-        "transcription": transcription,
-        "target_phonemes": target_phonemes,
-        "transcribed_phonemes": transcribed_phonemes,
+        "feedback": feedback,
         "score": f"{round(score * 100, 2)}%"
     }
