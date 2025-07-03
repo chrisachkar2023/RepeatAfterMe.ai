@@ -3,14 +3,18 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/static/styles.css">
+
+    <!-- for user icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
     <div class="navbar">
         <div class="signed-in-text">
             {% if username %}
-                <p>Welcome back, {{ username }}!</p>
+                <i class="fa-solid fa-circle-user"></i>
+                <span>{{ username }}</span>
             {% else %}
-                <p>Practice makes perfect.</p>
+                <span class="signed-out-text">Sign in to save your progress.</span>
             {% endif %}
         </div>
 

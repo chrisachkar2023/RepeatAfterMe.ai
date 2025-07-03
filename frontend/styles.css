@@ -52,10 +52,17 @@ body {
 }
 
 .signed-in-text {
-  text-align: left;
-  padding-left: 0;
-  margin-left: 0;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;  
+  font-size: 1.2em;
+}
+
+.signed-out-text {
+  font-size: 1em;
+  color: white;
+  font-weight: normal;
 }
 
 .site-name {
@@ -73,6 +80,7 @@ body {
   align-items: center;
   background-color: #1F1F1F;
   color: white;
+  font-weight: bold;
   padding: 10px 20px;
   font-family: Arial, sans-serif;
   height: 35px;
@@ -82,7 +90,6 @@ body {
   color: white;
   text-decoration: none;
   margin-left: 20px;
-  font-weight: bold;
   padding: 8px 12px;
   border-radius: 4px;
   transition: background-color 0.3s ease;
@@ -106,32 +113,6 @@ body {
   display: flex;
   justify-content: center;
 }
-
-/* currently unused
-.welcome-text {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  top: 20px;
-  left: 20px;
-  height: 40px;
-  color: white;
-  font-weight: bold;
-  font-style: italic;
-  font-size: 1rem;
-  border-radius: 8px;
-  padding: 0 12px;
-  margin: 0;
-  white-space: nowrap;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  background: transparent;
-  border: 2px solid white;
-}
-*/
-
 
 .login-title {
   color: black;
@@ -196,4 +177,21 @@ body {
   font-weight: bold;
   text-align: center;
   flex-direction: column;
+}
+
+.audio-submit {
+  background: linear-gradient(to right, #56ab2f, #a8e063);
+  color: white;
+  border: none;
+  padding: 0.7rem 2rem;
+  margin-top: 1rem;
+  border-radius: 999px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.audio-submit:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }

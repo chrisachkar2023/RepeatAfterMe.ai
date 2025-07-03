@@ -1,7 +1,9 @@
-from fastapi import FastAPI, Request, Form, UploadFile, File, Response
+from fastapi import FastAPI, Request, Form, UploadFile, File, Response, status
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.exception_handlers import http_exception_handler
+from starlette.exceptions import HTTPException as StarletteHTTPException
 import random
 import io
 import sqlite3
@@ -11,6 +13,7 @@ from itsdangerous import URLSafeSerializer
 from gtts import gTTS
 from backend.evaluator import evaluate
 from backend.add_user import add_user
+
 
 app = FastAPI()
 upload_results_cache = {}
@@ -196,10 +199,13 @@ def test_users():
     conn.close()
     return {"users": users}
 
-# error 404 catch-all route (prevents crashes when user types random paths)
-# MUST BE PLACED AT BOTTOM
-@app.get("/{full_path:path}")
-async def catch_all(request: Request, full_path: str):
-    return templates.TemplateResponse("404.html", 
-                                      {"request": request},
-                                      status_code=404)
+
+# error 404 handler
+@app.exception_handler(StarletteHTTPException)
+async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+    # custom handler
+    if exc.status_code == status.HTTP_404_NOT_FOUND:
+        return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
+    # default handler
+    else:
+        return await http_exception_handler(request, exc)

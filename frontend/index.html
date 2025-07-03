@@ -37,14 +37,13 @@
         <audio id="audioPlayer" controls style="display:none;"></audio>
     </div>
 
-    <h3>Upload File:</h3>
     <!-- Correct upload form (only one) -->
     <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
         <input type="hidden" id="hidden-word" name="word" value="{{ word }}">
         <input type="hidden" id="hidden-difficulty" name="difficulty" value="{{ difficulty }}"> 
 
         <input type="file" name="file" id="fileinput" required accept="audio/*" class="primary" style="display: none;">
-        <button type="submit" class="primary">Submit</button>
+        <button type="submit" class="audio-submit">Submit</button>
     </form>
 
     <hr>
