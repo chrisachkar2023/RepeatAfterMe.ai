@@ -117,6 +117,10 @@ async def get_word(difficulty: str):
 # Login page GET
 @app.get("/login", response_class=HTMLResponse)
 async def login_get(request: Request):
+    # prevents already logged in users from accessing
+    username = get_username_from_cookie(request)
+    if username:
+        return RedirectResponse(url="/")
     return templates.TemplateResponse("login.html", {"request": request, "error": None})
 
 # Login form POST
@@ -158,6 +162,10 @@ async def logout():
 # sign up page GET
 @app.get("/signup", response_class=HTMLResponse)
 async def signup_get(request: Request):
+    # prevents already logged in users from accessing
+    username = get_username_from_cookie(request)
+    if username:
+        return RedirectResponse(url="/")
     return templates.TemplateResponse("signup.html", {"request": request})
 
 # sign up page POST
@@ -205,7 +213,11 @@ def test_users():
 async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
     # custom handler
     if exc.status_code == status.HTTP_404_NOT_FOUND:
-        return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
+        username = get_username_from_cookie(request)
+        return templates.TemplateResponse("404.html", {
+                            "request": request,
+                            "username": username
+                            }, status_code=404)
     # default handler
     else:
         return await http_exception_handler(request, exc)
