@@ -17,6 +17,7 @@ from backend.add_user import add_user
 
 app = FastAPI()
 upload_results_cache = {}
+user_history_cache = {}
 
 # for frontend files
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
@@ -75,6 +76,15 @@ async def upload_post(request: Request, word: str = Form(...), difficulty: str =
     tts_audio_data_url = f"data:audio/mpeg;base64,{tts_audio_base64}"
 
     username = get_username_from_cookie(request)
+
+
+    if username:
+        history = user_history_cache.get(username, [])
+        history.append({
+            "word": word,
+            "score": result.get("score") if isinstance(result, dict) else result
+        })
+        user_history_cache[username] = history[-20:]
 
     import uuid
     session_id = str(uuid.uuid4())
@@ -196,6 +206,20 @@ async def signup_post(
     response = RedirectResponse(url="/", status_code=302)
     response.set_cookie(key="session", value=session_cookie, httponly=True)
     return response
+
+
+@app.get("/history", response_class=HTMLResponse)
+async def word_history(request: Request):
+    username = get_username_from_cookie(request)
+    if not username or username not in user_history_cache:
+        return HTMLResponse("<p>No history available.</p>", status_code=200)
+
+    history_html = "<ul>"
+    for entry in reversed(user_history_cache[username]):
+        history_html += f"<li>{entry['word']} - Score: {entry['score']}</li>"
+    history_html += "</ul>"
+    return HTMLResponse(history_html)
+
 
 # displays current users
 @app.get("/test-users")

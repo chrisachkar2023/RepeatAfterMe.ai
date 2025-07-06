@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="/static/styles.css">
 
-    <!-- for user icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
@@ -16,7 +15,7 @@
                     <span>{{ username }}</span>
 
                     <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="/word-history">Word History</a>
+                        <a href="#" id="wordHistoryBtn" style="text-decoration: none; color: inherit; display: block; padding: 8px 12px;">Word History</a>
                         <a href="/saved-words">Saved Words</a>
                     </div>
                 </div>
@@ -38,6 +37,36 @@
         </nav>
     </div>
 
+    <div id="wordHistorySidebar" style="display: none; position: fixed; right: 0; top: 0; background: #f8f8f8; width: 300px; height: 100%; padding: 20px; overflow-y: auto; box-shadow: -2px 0 5px rgba(0,0,0,0.1); z-index: 1000;">
+        <h3>Your Word History</h3>
+        <div id="historyContent">Loading...</div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const wordHistoryBtn = document.getElementById('wordHistoryBtn');
+            const sidebar = document.getElementById('wordHistorySidebar');
+            const historyContent = document.getElementById('historyContent');
+
+            if (wordHistoryBtn) {
+                wordHistoryBtn.addEventListener('click', function (event) {
+                    event.preventDefault(); // Prevent anchor from navigating
+                    const isVisible = sidebar.style.display === 'block';
+                    sidebar.style.display = isVisible ? 'none' : 'block';
+
+                    if (!isVisible) {
+                        fetch('/history')
+                            .then(res => res.text())
+                            .then(html => {
+                                historyContent.innerHTML = html;
+                            });
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Existing dropdown menu script -->
     <script src="/static/user-dropdown.js"></script>
 </body>
 </html>

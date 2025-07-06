@@ -5,7 +5,7 @@ const dropdownMenu = document.getElementById('dropdownMenu');
 
 if (userDropdown && dropdownMenu) {
     userDropdown.addEventListener('click', function(event) {
-        event.stopPropagation(); // prevent closing when clicking inside
+        event.stopPropagation(); 
         dropdownMenu.classList.toggle('show');
     });
 
