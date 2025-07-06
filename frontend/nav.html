@@ -11,8 +11,15 @@
     <div class="navbar">
         <div class="signed-in-text">
             {% if username %}
-                <i class="fa-solid fa-circle-user"></i>
-                <span>{{ username }}</span>
+                <div class="user-dropdown" id="userDropdown">
+                    <i class="fa-solid fa-circle-user"></i>
+                    <span>{{ username }}</span>
+
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="/word-history">Word History</a>
+                        <a href="/saved-words">Saved Words</a>
+                    </div>
+                </div>
             {% else %}
                 <span class="signed-out-text">Sign in to save your progress.</span>
             {% endif %}
@@ -30,5 +37,7 @@
             {% endif %}
         </nav>
     </div>
+
+    <script src="/static/user-dropdown.js"></script>
 </body>
 </html>
