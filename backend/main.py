@@ -214,10 +214,10 @@ async def word_history(request: Request):
     if not username or username not in user_history_cache:
         return HTMLResponse("<p>No history available.</p>", status_code=200)
 
-    history_html = "<ul>"
+    history_html = "<ol>"
     for entry in reversed(user_history_cache[username]):
         history_html += f"<li>{entry['word']} - Score: {entry['score']}</li>"
-    history_html += "</ul>"
+    history_html += "</ol>"
     return HTMLResponse(history_html)
 
 
