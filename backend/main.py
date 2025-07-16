@@ -6,15 +6,15 @@ from fastapi.exception_handlers import http_exception_handler
 from starlette.exceptions import HTTPException as StarletteHTTPException
 import random
 import io
-import sqlite3
 import base64
 from passlib.context import CryptContext
 from itsdangerous import URLSafeSerializer
 from gtts import gTTS
 from backend.evaluator import evaluate
 from backend.add_user import add_user
+from backend.database import SessionLocal, User, Word
 
-
+# setup FastAPI app
 app = FastAPI()
 upload_results_cache = {}
 user_history_cache = {}
@@ -39,12 +39,12 @@ def get_username_from_cookie(request: Request):
     return None
 
 def get_random_word_by_difficulty(difficulty: str):
-    connect = sqlite3.connect("backend/words.db")
-    cursor = connect.cursor()
-    cursor.execute("SELECT word FROM words WHERE difficulty = ?", (difficulty.lower(),))
-    words = [row[0] for row in cursor.fetchall()]
-    connect.close()
-    return random.choice(words)
+    session = SessionLocal()
+    words = session.query(Word).filter(Word.difficulty == difficulty.lower()).all()
+    session.close()
+    if not words:
+        return None
+    return random.choice([w.word for w in words])
 
 
 # root (home page)
@@ -141,16 +141,14 @@ async def login_post(
     username: str = Form(...),
     password: str = Form(...)
 ):    
-    conn = sqlite3.connect("backend/users.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT password_hash FROM users WHERE username = ?", (username,))
-    row = cursor.fetchone()
-    conn.close()
+    session = SessionLocal()
+    user = session.query(User).filter(User.username == username).first()
+    session.close()
 
-    if not row:
+    if not user:
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
 
-    stored_hash = row[0]
+    stored_hash = user.password_hash
 
     if not pwd_context.verify(password, stored_hash):
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
@@ -224,12 +222,10 @@ async def word_history(request: Request):
 # displays current users
 @app.get("/test-users")
 def test_users():
-    conn = sqlite3.connect("backend/users.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT username FROM users")
-    users = [row[0] for row in cursor.fetchall()]
-    conn.close()
-    return {"users": users}
+    session = SessionLocal()
+    users = session.query(User.username).all()
+    session.close()
+    return {"users": [u[0] for u in users]}
 
 
 # error 404 handler

@@ -1,22 +1,22 @@
-import sqlite3
 from passlib.context import CryptContext
+from sqlalchemy.orm import Session
+from backend.database import SessionLocal, User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def add_user(username: str, password: str) -> bool:
     hashed_password = pwd_context.hash(password)
-
-    conn = sqlite3.connect("backend/users.db")
-    cursor = conn.cursor()
+    session: Session = SessionLocal()
 
     # Check if username already exists
-    cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
-    if cursor.fetchone():
-        conn.close()
+    existing_user = session.query(User).filter(User.username == username).first()
+    if existing_user:
+        session.close()
         return False  # user exists
 
     # Add user
-    cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", (username, hashed_password))
-    conn.commit()
-    conn.close()
+    new_user = User(username=username, password_hash=hashed_password)
+    session.add(new_user)
+    session.commit()
+    session.close()
     return True
