@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, UploadFile, File, Response, status
+from fastapi import FastAPI, Request, Form, UploadFile, File, Response, status, Body
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -18,6 +18,7 @@ from backend.database import SessionLocal, User, Word
 app = FastAPI()
 upload_results_cache = {}
 user_history_cache = {}
+saved_words_cache = {}
 
 # for frontend files
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
@@ -217,6 +218,22 @@ async def word_history(request: Request):
         history_html += f"<li>{entry['word']} - Score: {entry['score']}</li>"
     history_html += "</ol>"
     return HTMLResponse(history_html)
+
+
+
+@app.post("/api/save-word")
+async def save_word(request: Request, data: dict = Body(...)):
+    word = data.get("word")
+    username = get_username_from_cookie(request)
+    if not username or not word:
+        return {"success": False}
+    saved = saved_words_cache.get(username, set())
+    if word in saved:
+        saved.remove(word)
+    else:
+        saved.add(word)
+    saved_words_cache[username] = saved
+    return {"success": True, "saved": word in saved}
 
 
 # displays current users

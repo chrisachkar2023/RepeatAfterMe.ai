@@ -106,6 +106,7 @@ body {
 }
 
 #word {
+  display: inline-block;
   font-size: 170px;
 }
 
@@ -272,4 +273,19 @@ body {
 
 #closeSidebar:hover {
     color: #e74c3c;
+}
+
+.save-star {
+    position: absolute;
+    top: 10px;
+    right: -15px;
+    font-size: 20px;
+    color: gold;
+    cursor: pointer;
+}
+
+.word-wrapper {
+    position: relative;
+    display: inline-block;
+    font-size: 170px; 
 }
