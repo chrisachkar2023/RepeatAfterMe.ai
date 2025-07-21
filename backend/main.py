@@ -221,6 +221,22 @@ async def word_history(request: Request):
 
 
 
+@app.get("/saved", response_class=HTMLResponse)
+async def saved_words(request: Request):
+    username = get_username_from_cookie(request)
+    if not username or username not in user_history_cache:
+        return HTMLResponse("<p>No Saved Words available.</p>", status_code=200)
+
+    saved = saved_words_cache.get(username, set())
+
+    saved_html = "<ol>"
+    for word in sorted(saved):
+        saved_html += f"<li>{word}</li>"
+    saved_html += "</ol>"
+    
+    return HTMLResponse(saved_html)
+
+
 @app.post("/api/save-word")
 async def save_word(request: Request, data: dict = Body(...)):
     word = data.get("word")
@@ -234,7 +250,6 @@ async def save_word(request: Request, data: dict = Body(...)):
         saved.add(word)
     saved_words_cache[username] = saved
     return {"success": True, "saved": word in saved}
-
 
 # displays current users
 @app.get("/test-users")

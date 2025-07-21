@@ -15,7 +15,7 @@
                     <span>{{ username }}</span>
 
                     <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="/saved-words">Saved Words</a>
+                        <a href="#" id="savedWordsBtn">Saved Words</a>
                         <a href="#" id="wordHistoryBtn">Word History</a>
                     </div>
                 </div>
@@ -43,6 +43,11 @@
         <div id="historyContent">Loading...</div>
     </div>
 
+    <div id="savedWordsSidebar">
+        <i class="fa-solid fa-xmark" id="closeSavedSidebar" title="Close"></i>
+        <h3>Saved Words</h3>
+        <div id="savedWordsContent">Loading...</div>
+    </div>
 
     <!-- scripts -->
     <script src="/static/user-dropdown.js"></script>
