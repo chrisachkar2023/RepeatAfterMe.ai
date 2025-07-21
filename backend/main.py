@@ -224,7 +224,7 @@ async def word_history(request: Request):
 @app.get("/saved", response_class=HTMLResponse)
 async def saved_words(request: Request):
     username = get_username_from_cookie(request)
-    if not username or username not in user_history_cache:
+    if not username or username not in saved_words_cache:
         return HTMLResponse("<p>No Saved Words available.</p>", status_code=200)
 
     saved = saved_words_cache.get(username, set())
@@ -251,13 +251,6 @@ async def save_word(request: Request, data: dict = Body(...)):
     saved_words_cache[username] = saved
     return {"success": True, "saved": word in saved}
 
-# displays current users
-@app.get("/test-users")
-def test_users():
-    session = SessionLocal()
-    users = session.query(User.username).all()
-    session.close()
-    return {"users": [u[0] for u in users]}
 
 
 # error 404 handler
