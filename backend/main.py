@@ -220,24 +220,39 @@ async def word_history(request: Request):
     return HTMLResponse(history_html)
 
 
-# saved words sidebar
 @app.get("/saved", response_class=HTMLResponse)
 async def saved_words(request: Request):
     username = get_username_from_cookie(request)
-    if not username or username not in saved_words_cache:
+    if not username:
         return HTMLResponse("<p>No Saved Words available.</p>", status_code=200)
 
-    saved = saved_words_cache.get(username, set())
+    session = SessionLocal()
+    try:
+        user = session.query(User).filter_by(username=username).first()
+        if not user:
+            return HTMLResponse("<p>No Saved Words available.</p>", status_code=200)
 
-    # ordered list of saved words
-    saved_html = "<ol>"
-    for word in sorted(saved):
-        saved_html += f"<li>{word}</li>"
-    saved_html += "</ol>"
-    
-    return HTMLResponse(saved_html)
+        saved = (
+            session.query(Word.word)
+            .join(SavedWord, Word.id == SavedWord.word_id)
+            .filter(SavedWord.user_id == user.id)
+            .all()
+        )
+        saved_words_list = [w.word for w in saved]
 
-# lets user save a given word
+        if not saved_words_list:
+            return HTMLResponse("<p>No Saved Words available.</p>", status_code=200)
+
+        saved_html = "<ol>"
+        for word in sorted(saved_words_list):
+            saved_html += f"<li>{word}</li>"
+        saved_html += "</ol>"
+
+        return HTMLResponse(saved_html)
+
+    finally:
+        session.close()
+
 @app.post("/api/save-word")
 async def save_word(request: Request, data: dict = Body(...)):
     word_text = data.get("word")
@@ -249,30 +264,29 @@ async def save_word(request: Request, data: dict = Body(...)):
     session = SessionLocal()
     
     try:
-        # get user & desired word to save
+        # Get user and word objects
         user = session.query(User).filter_by(username=username).first()
         word_obj = session.query(Word).filter_by(word=word_text).first()
 
         if not user or not word_obj:
             return {"success": False}
 
-        # check if user already saved the word
+        # Check if already saved
         existing = session.query(SavedWord).filter_by(user_id=user.id, word_id=word_obj.id).first()
 
-        # if word is already saved, then remove it
         if existing:
+            # Word is already saved, so delete it (unsave)
             session.delete(existing)
             session.commit()
-            return {"success": True, "saved": False}
-        # if word isnt saved, save it
+            return {"success": True, "saved": False}  # indicates word was removed
         else:
+            # Word not saved yet, so add it
             new_saved = SavedWord(user_id=user.id, word_id=word_obj.id)
             session.add(new_saved)
             session.commit()
-            return {"success": True, "saved": True}
+            return {"success": True, "saved": True}   # indicates word was added
     finally:
         session.close()
-
 
 # error 404 handler
 @app.exception_handler(StarletteHTTPException)
