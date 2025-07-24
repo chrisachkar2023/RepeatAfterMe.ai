@@ -29,6 +29,7 @@ serializer = URLSafeSerializer(SECRET_KEY)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# helper function to get username from cookie
 def get_username_from_cookie(request: Request):
     cookie = request.cookies.get("session")
     if cookie:
@@ -39,6 +40,7 @@ def get_username_from_cookie(request: Request):
             return None
     return None
 
+# helper function to randomly select a word from some difficulty
 def get_random_word_by_difficulty(difficulty: str):
     session = SessionLocal()
     words = session.query(Word).filter(Word.difficulty == difficulty.lower()).all()
@@ -46,6 +48,23 @@ def get_random_word_by_difficulty(difficulty: str):
     if not words:
         return None
     return random.choice([w.word for w in words])
+
+# helper function to check if word should be starred (if it's a saved word)
+def is_word_saved_by_user(username: str, word_text: str) -> bool:
+    if not username or not word_text:
+        return False
+    
+    session = SessionLocal()
+    try:
+        user = session.query(User).filter_by(username=username).first()
+        word_obj = session.query(Word).filter_by(word=word_text).first()
+        if not user or not word_obj:
+            return False
+        
+        saved = session.query(SavedWord).filter_by(user_id=user.id, word_id=word_obj.id).first()
+        return saved is not None
+    finally:
+        session.close()
 
 
 # root (home page)
@@ -55,19 +74,8 @@ async def read_root(request: Request):
     word = get_random_word_by_difficulty(difficulty)
     username = get_username_from_cookie(request)
     
-    # makes already saved words show up with a filled-in star icon (if logged in)
-    is_saved = False
-    if username and word:
-        session = SessionLocal()
-        
-        user = session.query(User).filter_by(username=username).first()
-        word_obj = session.query(Word).filter_by(word=word).first()
-        
-        if user and word_obj:
-            saved = session.query(SavedWord).filter_by(user_id=user.id, word_id=word_obj.id).first()
-            is_saved = saved is not None
-            
-        session.close()
+    # check for star symbol
+    is_saved = is_word_saved_by_user(username, word)
     
     return templates.TemplateResponse("index.html", {
         "request": request,
@@ -119,11 +127,18 @@ async def upload_post(request: Request, word: str = Form(...), difficulty: str =
 @app.get("/results/{session_id}", response_class=HTMLResponse)
 async def show_results(request: Request, session_id: str):
     data = upload_results_cache.get(session_id)
+    
+    # if no data found: error 404
     if not data:
-        # if no data found: error 404
         return templates.TemplateResponse("404.html", 
                                       {"request": request},
                                       status_code=404)
+        
+    # checks for star symbol
+    username = data["username"]
+    word = data["word"]
+    is_saved = is_word_saved_by_user(username, word)
+    
     # return regular results if data was found
     return templates.TemplateResponse("index.html", {
         "request": request,
@@ -132,7 +147,8 @@ async def show_results(request: Request, session_id: str):
         "result": data["result"],
         "audio_data_url": data["audio_data_url"],
         "tts_audio_data_url": data["tts_audio_data_url"],
-        "difficulty": data["difficulty"]
+        "difficulty": data["difficulty"],
+        "is_saved": is_saved
     })
 
 
@@ -309,21 +325,9 @@ async def save_word(request: Request, data: dict = Body(...)):
 @app.get("/api/is-word-saved")
 async def is_word_saved(request: Request, word: str = Query(...)):
     username = get_username_from_cookie(request)
-    if not username or not word:
-        return JSONResponse(content={"saved": False})
+    saved = is_word_saved_by_user(username, word)
+    return JSONResponse(content={"saved": saved})
     
-    session = SessionLocal()
-    try:
-        user = session.query(User).filter_by(username=username).first()
-        word_obj = session.query(Word).filter_by(word=word).first()
-
-        if not user or not word_obj:
-            return JSONResponse(content={"saved": False})
-
-        saved = session.query(SavedWord).filter_by(user_id=user.id, word_id=word_obj.id).first()
-        return JSONResponse(content={"saved": saved is not None})
-    finally:
-        session.close()
 
 # saved word links
 @app.get("/practice/{word}", response_class=HTMLResponse)
@@ -341,10 +345,15 @@ async def practice_word(request: Request, word: str):
                             "username": username
                             }, status_code=404)
 
+        # checks for star symbol
+        is_saved = is_word_saved_by_user(username, word)
+        
         return templates.TemplateResponse("index.html", {
             "request": request,
+            "username": username,
             "word": word_obj.word,
-            "difficulty": word_obj.difficulty or "custom"
+            "difficulty": word_obj.difficulty,
+            "is_saved": is_saved
         })
     finally:
         session.close()
