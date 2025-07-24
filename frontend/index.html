@@ -56,11 +56,12 @@
         <button type="submit" class="audio-submit">Submit</button>
     </form>
 
-    <hr>
+    <div class="custom-separator"></div>
+
     <div class="results-container">
-        <div class="results-left">
-            <h3>Results:</h3>
-            {% if result %}
+        <h3>Results:</h3>
+        {% if result %}
+            <div class="results-left">
                 {% if audio_data_url %}
                     <h4>Your Audio:</h4>
                     <audio controls src="{{ audio_data_url }}"></audio>
@@ -72,10 +73,10 @@
                 
                 <p><strong></strong> {{ result.feedback }}</p>
                 <p><strong>Pronunciation Score:</strong> {{ result.score }}</p>
-            {% else %}
-                <p>No results yet. Upload a file and try.</p>
-            {% endif %}
-        </div>
+            </div>
+        {% else %}
+            <p>No results yet. Please submit an audio recording.</p>
+        {% endif %}
         <div class="results-right">
 
         </div>

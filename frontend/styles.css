@@ -4,8 +4,11 @@ html, body {
   font-family: 'Inter', sans-serif;
   text-align: center;
   color: white;
-  padding-bottom: 50px;
   overscroll-behavior: none;
+}
+
+body {
+  padding-bottom: 50px;
 }
 
 .page-title {
@@ -354,4 +357,12 @@ html, body {
   margin-left: 0;
   margin-right: auto;
   text-align: center;
+}
+
+.custom-separator {
+  height: 2px;
+  background: linear-gradient(to right, rgba(255,255,255,0.2), rgba(255,255,255,0.6), rgba(255,255,255,0.2));
+  margin: 40px auto;
+  width: 60%;
+  border-radius: 999px;
 }
