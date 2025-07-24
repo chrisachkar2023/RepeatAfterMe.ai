@@ -261,7 +261,7 @@ async def saved_words(request: Request):
 
         saved_html = "<ol>"
         for word in sorted(saved_words_list):
-            saved_html += f"<li>{word}</li>"
+            saved_html += f'<li><a href="/practice/{word}">{word}</a></li>'
         saved_html += "</ol>"
 
         return HTMLResponse(saved_html)
@@ -325,6 +325,16 @@ async def is_word_saved(request: Request, word: str = Query(...)):
     finally:
         session.close()
 
+@app.get("/practice/{word}", response_class=HTMLResponse)
+async def practice_word(request: Request, word: str):
+    username = get_username_from_cookie(request)
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "username": username,
+        "word": word,
+        "difficulty": "custom"
+    })
+    
 # error 404 handler
 @app.exception_handler(StarletteHTTPException)
 async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
