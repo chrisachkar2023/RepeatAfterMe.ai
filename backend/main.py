@@ -325,15 +325,29 @@ async def is_word_saved(request: Request, word: str = Query(...)):
     finally:
         session.close()
 
+# saved word links
 @app.get("/practice/{word}", response_class=HTMLResponse)
 async def practice_word(request: Request, word: str):
     username = get_username_from_cookie(request)
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "username": username,
-        "word": word,
-        "difficulty": "custom"
-    })
+    if not username:
+        return RedirectResponse("/login", status_code=302)
+    
+    session = SessionLocal()
+    try:
+        word_obj = session.query(Word).filter_by(word=word).first()
+        if not word_obj:
+            return templates.TemplateResponse("404.html", {
+                            "request": request,
+                            "username": username
+                            }, status_code=404)
+
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "word": word_obj.word,
+            "difficulty": word_obj.difficulty or "custom"
+        })
+    finally:
+        session.close()
     
 # error 404 handler
 @app.exception_handler(StarletteHTTPException)
