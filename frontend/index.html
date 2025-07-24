@@ -57,22 +57,29 @@
     </form>
 
     <hr>
-    <h3>Results:</h3>
-    {% if result %}
-        {% if audio_data_url %}
-            <h4>Your Audio:</h4>
-            <audio controls src="{{ audio_data_url }}"></audio>
-        {% endif %}
-        {% if tts_audio_data_url %}
-            <h4>Correct Audio:</h4>
-            <audio controls src="{{ tts_audio_data_url }}"></audio>
-        {% endif %}
-        <p><strong></strong> {{ result.feedback }}</p>
-        <p><strong>Pronunciation Score:</strong> {{ result.score }}</p>
-    {% else %}
-        <p>No results yet. Upload a file and try.</p>
-    {% endif %}
+    <div class="results-container">
+        <div class="results-left">
+            <h3>Results:</h3>
+            {% if result %}
+                {% if audio_data_url %}
+                    <h4>Your Audio:</h4>
+                    <audio controls src="{{ audio_data_url }}"></audio>
+                {% endif %}
+                {% if tts_audio_data_url %}
+                    <h4>Correct Audio:</h4>
+                    <audio controls src="{{ tts_audio_data_url }}"></audio>
+                {% endif %}
+                
+                <p><strong></strong> {{ result.feedback }}</p>
+                <p><strong>Pronunciation Score:</strong> {{ result.score }}</p>
+            {% else %}
+                <p>No results yet. Upload a file and try.</p>
+            {% endif %}
+        </div>
+        <div class="results-right">
 
+        </div>
+    </div>
 
 
 

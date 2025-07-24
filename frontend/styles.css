@@ -347,3 +347,11 @@ html, body {
 #savedWordsSidebar a:hover {
     text-decoration: underline;
 }
+
+.results-left {
+  width: 100%;
+  max-width: 800px;
+  margin-left: 0;
+  margin-right: auto;
+  text-align: center;
+}
