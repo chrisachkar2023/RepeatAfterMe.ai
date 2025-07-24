@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Request, Form, UploadFile, File, Response, status, Body
-from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
+from fastapi import FastAPI, Request, Form, UploadFile, File, Response, status, Body, Query
+from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.exception_handlers import http_exception_handler
@@ -301,6 +301,27 @@ async def save_word(request: Request, data: dict = Body(...)):
             session.add(new_saved)
             session.commit()
             return {"success": True, "saved": True}   # indicates word was added
+    finally:
+        session.close()
+        
+        
+# specifically checks if a word should be starred
+@app.get("/api/is-word-saved")
+async def is_word_saved(request: Request, word: str = Query(...)):
+    username = get_username_from_cookie(request)
+    if not username or not word:
+        return JSONResponse(content={"saved": False})
+    
+    session = SessionLocal()
+    try:
+        user = session.query(User).filter_by(username=username).first()
+        word_obj = session.query(Word).filter_by(word=word).first()
+
+        if not user or not word_obj:
+            return JSONResponse(content={"saved": False})
+
+        saved = session.query(SavedWord).filter_by(user_id=user.id, word_id=word_obj.id).first()
+        return JSONResponse(content={"saved": saved is not None})
     finally:
         session.close()
 
