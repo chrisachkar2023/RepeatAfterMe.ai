@@ -339,3 +339,11 @@ html, body {
 #closeSavedSidebar:hover {
     color: #e74c3c;
 }
+
+#savedWordsSidebar a {
+    color: #1a73e8;
+    text-decoration: none;
+}
+#savedWordsSidebar a:hover {
+    text-decoration: underline;
+}
