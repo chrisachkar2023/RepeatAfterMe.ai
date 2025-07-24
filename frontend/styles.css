@@ -317,6 +317,9 @@ body {
     margin-top: 15px;
     font-size: 1rem;
     line-height: 1.4;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding-right: 10px;
 }
 
 #closeSavedSidebar {

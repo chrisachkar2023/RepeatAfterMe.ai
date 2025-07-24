@@ -12,7 +12,7 @@ from itsdangerous import URLSafeSerializer
 from gtts import gTTS
 from backend.evaluator import evaluate
 from backend.add_user import add_user
-from backend.database import SessionLocal, User, Word
+from backend.database import SessionLocal, User, Word, SavedWord
 
 # setup FastAPI app
 app = FastAPI()
@@ -206,7 +206,7 @@ async def signup_post(
     response.set_cookie(key="session", value=session_cookie, httponly=True)
     return response
 
-
+# word history sidebar
 @app.get("/history", response_class=HTMLResponse)
 async def word_history(request: Request):
     username = get_username_from_cookie(request)
@@ -220,7 +220,7 @@ async def word_history(request: Request):
     return HTMLResponse(history_html)
 
 
-
+# saved words sidebar
 @app.get("/saved", response_class=HTMLResponse)
 async def saved_words(request: Request):
     username = get_username_from_cookie(request)
@@ -229,6 +229,7 @@ async def saved_words(request: Request):
 
     saved = saved_words_cache.get(username, set())
 
+    # ordered list of saved words
     saved_html = "<ol>"
     for word in sorted(saved):
         saved_html += f"<li>{word}</li>"
@@ -236,21 +237,41 @@ async def saved_words(request: Request):
     
     return HTMLResponse(saved_html)
 
-
+# lets user save a given word
 @app.post("/api/save-word")
 async def save_word(request: Request, data: dict = Body(...)):
-    word = data.get("word")
+    word_text = data.get("word")
     username = get_username_from_cookie(request)
-    if not username or not word:
+    
+    if not username or not word_text:
         return {"success": False}
-    saved = saved_words_cache.get(username, set())
-    if word in saved:
-        saved.remove(word)
-    else:
-        saved.add(word)
-    saved_words_cache[username] = saved
-    return {"success": True, "saved": word in saved}
+    
+    session = SessionLocal()
+    
+    try:
+        # get user & desired word to save
+        user = session.query(User).filter_by(username=username).first()
+        word_obj = session.query(Word).filter_by(word=word_text).first()
 
+        if not user or not word_obj:
+            return {"success": False}
+
+        # check if user already saved the word
+        existing = session.query(SavedWord).filter_by(user_id=user.id, word_id=word_obj.id).first()
+
+        # if word is already saved, then remove it
+        if existing:
+            session.delete(existing)
+            session.commit()
+            return {"success": True, "saved": False}
+        # if word isnt saved, save it
+        else:
+            new_saved = SavedWord(user_id=user.id, word_id=word_obj.id)
+            session.add(new_saved)
+            session.commit()
+            return {"success": True, "saved": True}
+    finally:
+        session.close()
 
 
 # error 404 handler
