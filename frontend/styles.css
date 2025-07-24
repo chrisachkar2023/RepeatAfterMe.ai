@@ -5,6 +5,7 @@ html, body {
   text-align: center;
   color: white;
   padding-bottom: 50px;
+  overscroll-behavior: none;
 }
 
 .page-title {
@@ -84,6 +85,9 @@ html, body {
   padding: 10px 20px;
   font-family: Arial, sans-serif;
   height: 35px;
+  position: sticky;
+  top: 0;
+  z-index: 2000;
 }
 
 .nav-links a {
