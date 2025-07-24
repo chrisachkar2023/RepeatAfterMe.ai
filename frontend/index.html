@@ -29,7 +29,10 @@
     <div class="word-wrapper">
     <span id="word">{{ word }}</span>
         {% if username %}
-            <i class="fa{{ 's' if word in saved_words else 'r' }} fa-star save-star" id="saveStar" title="Save this word"></i>
+            <i class="fa{{ 's' if is_saved else 'r' }} fa-star save-star" 
+                id="saveStar" 
+                title="Save this word">
+            </i>
         {% endif %}
     </div>
 

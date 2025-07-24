@@ -54,11 +54,27 @@ async def read_root(request: Request):
     difficulty = request.query_params.get("difficulty") or request.cookies.get("difficulty") or "easy"
     word = get_random_word_by_difficulty(difficulty)
     username = get_username_from_cookie(request)
+    
+    # makes already saved words show up with a filled-in star icon (if logged in)
+    is_saved = False
+    if username and word:
+        session = SessionLocal()
+        
+        user = session.query(User).filter_by(username=username).first()
+        word_obj = session.query(Word).filter_by(word=word).first()
+        
+        if user and word_obj:
+            saved = session.query(SavedWord).filter_by(user_id=user.id, word_id=word_obj.id).first()
+            is_saved = saved is not None
+            
+        session.close()
+    
     return templates.TemplateResponse("index.html", {
         "request": request,
         "username": username,
         "word": word,
-        "difficulty": difficulty
+        "difficulty": difficulty,
+        "is_saved": is_saved
     })
     
 @app.post("/upload")
