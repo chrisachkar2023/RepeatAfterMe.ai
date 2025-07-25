@@ -366,3 +366,11 @@ body {
   width: 60%;
   border-radius: 999px;
 }
+
+.big-score {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #56ab2f;
+  margin: 0.2em 0 0.5em;
+  text-shadow: 0 0 8px rgba(86, 171, 47, 0.7);
+}

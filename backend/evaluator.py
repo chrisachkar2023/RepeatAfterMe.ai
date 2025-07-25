@@ -58,16 +58,17 @@ def evaluate(audio_path, target_word):
 
     percentage = round(score * 100, 2)
     if percentage <= 20:
-        feedback = "😞 Bad Pronunciation"
+        feedback = "Bad Pronouncation"
     elif percentage <= 50:
-        feedback = "🛠️ Pronunciation Needs Improvement"
+        feedback = "Okay Pronouncation"
     elif percentage <= 75:
-        feedback = "🙂 Good Pronunciation"
+        feedback = "Good Pronouncation"
     else:
-        feedback = "🌟 Perfect Pronunciation"
+        feedback = "Perfect Pronouncation"
         
     return {
         "target_word": target_word,
+        "transcription": transcription,
         "feedback": feedback,
         "score": f"{round(score * 100, 2)}%"
     }

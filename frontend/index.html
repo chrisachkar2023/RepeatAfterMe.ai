@@ -61,6 +61,11 @@
     <div class="results-container">
         <h3>Results:</h3>
         {% if result %}
+            <div class="results-score">
+                <p id="score-text" class="big-score">{{ result.score }}</p>
+                <p id="feedback-text">{{ result.feedback }}</p>
+            </div>
+
             <div class="results-left">
                 {% if audio_data_url %}
                     <h4>Your Audio:</h4>
@@ -70,9 +75,8 @@
                     <h4>Correct Audio:</h4>
                     <audio controls src="{{ tts_audio_data_url }}"></audio>
                 {% endif %}
-                
-                <p><strong></strong> {{ result.feedback }}</p>
-                <p><strong>Pronunciation Score:</strong> {{ result.score }}</p>
+
+                <p><strong>Transcription:</strong> {{ result.transcription }}</p>
             </div>
         {% else %}
             <p>No results yet. Please submit an audio recording.</p>
@@ -88,6 +92,7 @@
     <script src="/static/recorder.js"></script>
     <script src="/static/difficulty.js"></script>
     <script src="/static/saved-words.js"></script>
+    <script src="/static/score-color.js"></script>
 </body>
 </html>
 
