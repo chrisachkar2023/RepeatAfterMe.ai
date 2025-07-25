@@ -4,11 +4,15 @@ from g2p_en import G2p
 import pronouncing
 from panphon.distance import Distance
 from pydub import AudioSegment
+from huggingface_hub import InferenceClient
+import os
 
 # Initialize Pipeline
 asr = pipeline("automatic-speech-recognition", model="facebook/wav2vec2-base-960h")
 g2p = G2p()
 d = Distance()
+
+generator = pipeline("text2text-generation", model="facebook/blenderbot-400M-distill", device=-1)
 
 # Load and preprocess audio
 def load_audio(file_obj):
@@ -64,11 +68,23 @@ def evaluate(audio_path, target_word):
     elif percentage <= 75:
         feedback = "Good Pronouncation"
     else:
-        feedback = "Perfect Pronouncation"
-        
+        feedback = "Perfect Pronouncation"    
+    ai_feedback = generate_pronunciation_feedback(score, transcription, target_word)
+
     return {
         "target_word": target_word,
         "transcription": transcription,
         "feedback": feedback,
-        "score": f"{round(score * 100, 2)}%"
+        "score": f"{round(score * 100, 2)}%",
+        "ai_feedback": ai_feedback
     }
+
+def generate_pronunciation_feedback(score: float, transcription: str, target_word: str):
+    prompt = (
+        f"The user tried to pronounce the word '{target_word}' but said '{transcription}'. "
+        f"Their pronunciation score was {round(score * 100)}%. "
+        f"Give clear, helpful feedback on how they can improve their pronunciation."
+        f"Do not repeat the input. Give concise, actionable feedback only."
+    )
+    response = generator(prompt, max_new_tokens=100)
+    return response[0]["generated_text"].strip()

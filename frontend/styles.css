@@ -374,3 +374,22 @@ body {
   margin: 0.2em 0 0.5em;
   text-shadow: 0 0 8px rgba(86, 171, 47, 0.7);
 }
+.ai-feedback-box {
+    border: 1px solid #ccc;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+.btn-feedback {
+    background-color: #4CAF50;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-feedback:hover {
+    background-color: #45a049;
+}
