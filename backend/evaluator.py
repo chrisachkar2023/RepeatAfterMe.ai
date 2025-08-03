@@ -49,7 +49,7 @@ def phoneme_similarity(target_phonemes, transcribed_phonemes):
     return similarity
 
 # Full evaluation
-def evaluate(audio_path, target_word):
+def evaluate(audio_path, target_word, logged_in):
     audio = load_audio(audio_path)
     transcription = transcribe(audio).replace(" ", "")
     
@@ -73,8 +73,10 @@ def evaluate(audio_path, target_word):
     else:
         feedback = "Perfect Pronouncation" 
         
-    # disable AI feedback for perfect pronouncation
-    if percentage > 75:
+    # disable AI feedback when signed out or when perfect pronouncation
+    if not logged_in:
+        ai_feedback = "Please login to use AI feedback."
+    elif percentage > 75:
         ai_feedback = "No feedback needed — perfect pronunciation!"
     else:
         ai_feedback = generate_pronunciation_feedback(score, transcription, target_word)   

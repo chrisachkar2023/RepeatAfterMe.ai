@@ -88,9 +88,12 @@ async def read_root(request: Request):
     
 @app.post("/upload")
 async def upload_post(request: Request, word: str = Form(...), difficulty: str = Form(...), file: UploadFile = File(...)):
+    username = get_username_from_cookie(request)
+    logged_in = username is not None
+    
     file_bytes = await file.read()
     audio_file = io.BytesIO(file_bytes)
-    result = evaluate(audio_file, word)
+    result = evaluate(audio_file, word, logged_in)
     audio_base64 = base64.b64encode(file_bytes).decode('utf-8')
     audio_data_url = f"data:audio/mp3;base64,{audio_base64}"
 
@@ -100,8 +103,6 @@ async def upload_post(request: Request, word: str = Form(...), difficulty: str =
     tts_fp.seek(0)
     tts_audio_base64 = base64.b64encode(tts_fp.read()).decode('utf-8')
     tts_audio_data_url = f"data:audio/mpeg;base64,{tts_audio_base64}"
-
-    username = get_username_from_cookie(request)
 
     if username:
         history = user_history_cache.get(username, [])
