@@ -386,3 +386,22 @@ body {
 .btn-feedback:hover {
     background-color: #45a049;
 }
+
+.site-name img {
+    height: 40px;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.site-name {
+    display: flex;
+    align-items: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    gap: 10px; 
+}
+
+.logo-img {
+    height: 30px;
+    width: auto;
+}
