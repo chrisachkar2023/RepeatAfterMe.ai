@@ -7,6 +7,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 import random
 import io
 import base64
+import uuid
 from passlib.context import CryptContext
 from itsdangerous import URLSafeSerializer
 from gtts import gTTS
@@ -102,7 +103,6 @@ async def upload_post(request: Request, word: str = Form(...), difficulty: str =
 
     username = get_username_from_cookie(request)
 
-
     if username:
         history = user_history_cache.get(username, [])
         history.append({
@@ -111,7 +111,6 @@ async def upload_post(request: Request, word: str = Form(...), difficulty: str =
         })
         user_history_cache[username] = history[-20:]
 
-    import uuid
     session_id = str(uuid.uuid4())
     upload_results_cache[session_id] = {
         "username": username,
@@ -127,15 +126,16 @@ async def upload_post(request: Request, word: str = Form(...), difficulty: str =
 @app.get("/results/{session_id}", response_class=HTMLResponse)
 async def show_results(request: Request, session_id: str):
     data = upload_results_cache.get(session_id)
+    username = get_username_from_cookie(request)
     
     # if no data found: error 404
     if not data:
         return templates.TemplateResponse("404.html", 
-                                      {"request": request},
+                                      {"request": request,
+                                       "username": username},
                                       status_code=404)
         
     # checks for star symbol
-    username = data["username"]
     word = data["word"]
     is_saved = is_word_saved_by_user(username, word)
     

@@ -4,7 +4,7 @@ from g2p_en import G2p
 import pronouncing
 from panphon.distance import Distance
 from pydub import AudioSegment
-from huggingface_hub import InferenceClient
+import google.generativeai as genai
 import os
 
 # Initialize Pipeline
@@ -12,7 +12,9 @@ asr = pipeline("automatic-speech-recognition", model="facebook/wav2vec2-base-960
 g2p = G2p()
 d = Distance()
 
-generator = pipeline("text2text-generation", model="facebook/blenderbot-400M-distill", device=-1)
+# set up gemini client
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Load and preprocess audio
 def load_audio(file_obj):
@@ -61,6 +63,7 @@ def evaluate(audio_path, target_word):
         score = phoneme_similarity(target_phonemes, transcribed_phonemes)
 
     percentage = round(score * 100, 2)
+    
     if percentage <= 20:
         feedback = "Bad Pronouncation"
     elif percentage <= 50:
@@ -68,8 +71,13 @@ def evaluate(audio_path, target_word):
     elif percentage <= 75:
         feedback = "Good Pronouncation"
     else:
-        feedback = "Perfect Pronouncation"    
-    ai_feedback = generate_pronunciation_feedback(score, transcription, target_word)
+        feedback = "Perfect Pronouncation" 
+        
+    # disable AI feedback for perfect pronouncation
+    if percentage > 75:
+        ai_feedback = "No feedback needed — perfect pronunciation!"
+    else:
+        ai_feedback = generate_pronunciation_feedback(score, transcription, target_word)   
 
     return {
         "target_word": target_word,
@@ -79,12 +87,21 @@ def evaluate(audio_path, target_word):
         "ai_feedback": ai_feedback
     }
 
+# uses gemini api for ai feedback
 def generate_pronunciation_feedback(score: float, transcription: str, target_word: str):
+    model = genai.GenerativeModel("gemini-2.5-flash-lite")
+    
     prompt = (
-        f"The user tried to pronounce the word '{target_word}' but said '{transcription}'. "
-        f"Their pronunciation score was {round(score * 100)}%. "
-        f"Give clear, helpful feedback on how they can improve their pronunciation."
-        f"Do not repeat the input. Give concise, actionable feedback only."
+        f"Give a very brief (2 sentences max) constructive feedback on the pronunciation of '{target_word}'. "
+        f"The user's transcription is '{transcription}' with a similarity score of {round(score * 100, 2)}%."
     )
-    response = generator(prompt, max_new_tokens=100)
-    return response[0]["generated_text"].strip()
+
+    response = model.generate_content(
+        prompt,
+        generation_config={
+            "max_output_tokens": 100,
+            "temperature": 0.7
+        }
+    )
+
+    return response.text

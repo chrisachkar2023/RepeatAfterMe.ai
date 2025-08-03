@@ -66,24 +66,20 @@
                 <p id="feedback-text">{{ result.feedback }}</p>
             </div>
 
-            <div class="results-left">
-                {% if audio_data_url %}
-                    <h4>Your Audio:</h4>
-                    <audio controls src="{{ audio_data_url }}"></audio>
-                {% endif %}
-                {% if tts_audio_data_url %}
-                    <h4>Correct Audio:</h4>
-                    <audio controls src="{{ tts_audio_data_url }}"></audio>
-                {% endif %}
+            {% if audio_data_url %}
+                <h4>Your Audio:</h4>
+                <audio controls src="{{ audio_data_url }}"></audio>
+            {% endif %}
+            {% if tts_audio_data_url %}
+                <h4>Correct Audio:</h4>
+                <audio controls src="{{ tts_audio_data_url }}"></audio>
+            {% endif %}
 
-                <p><strong>Transcription:</strong> {{ result.transcription }}</p>
-            </div>
+            <p><strong>Transcription:</strong> {{ result.transcription }}</p>
+    
         {% else %}
             <p>No results yet. Please submit an audio recording.</p>
         {% endif %}
-        <div class="results-right">
-
-        </div>
     </div>
 
     {% if result and result.ai_feedback %}
