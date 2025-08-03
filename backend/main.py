@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, Form, UploadFile, File, Response, status, Body, Query
-from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse, JSONResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.exception_handlers import http_exception_handler
@@ -24,6 +24,11 @@ saved_words_cache = {}
 # for frontend files
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
 templates = Jinja2Templates(directory="frontend")
+
+# favicon
+@app.get("/favicon.ico")
+async def favicon():
+    return FileResponse("frontend/images/favicon.ico")
 
 SECRET_KEY = "super-secret-key"
 serializer = URLSafeSerializer(SECRET_KEY)
