@@ -91,7 +91,7 @@ def evaluate(audio_path, target_word, logged_in):
 
 # uses gemini api for ai feedback
 def generate_pronunciation_feedback(score: float, transcription: str, target_word: str):
-    model = genai.GenerativeModel("gemini-2.5-flash-lite")
+    model = genai.GenerativeModel("gemma-3-27b-it")
     
     prompt = (
         f"Give a very brief (2 sentences max) constructive feedback on the pronunciation of '{target_word}'. "
@@ -106,4 +106,8 @@ def generate_pronunciation_feedback(score: float, transcription: str, target_wor
         }
     )
 
+    # failsafe if we make too many API calls
+    if not response.text:
+        return "AI feedback unavailable. Please try again later."
+    
     return response.text
