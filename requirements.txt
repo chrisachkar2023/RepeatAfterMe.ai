@@ -15,3 +15,5 @@ panphon==0.22.2
 pronouncing==0.2.0
 pydub==0.25.1
 psycopg2-binary
+setuptools>=65.0.0
+wheel
