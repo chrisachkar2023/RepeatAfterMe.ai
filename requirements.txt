@@ -1,12 +1,23 @@
+# FastAPI and related dependencies
 fastapi==0.116.1
+uvicorn[standard]==0.18.2
 jinja2
 python-multipart
 passlib[bcrypt]
 itsdangerous
 gtts
+
+# Machine Learning and NLP
+transformers==4.54.1
+torch==2.1.0  # Updated PyTorch version to be compatible with transformers
+google-generativeai==0.7.0
+
+# Database & Utility
 sqlalchemy
+numpy==1.25.1  # Fixed NumPy version to the latest stable
 g2p_en==2.1.0
 panphon==0.22.2
 pronouncing==0.2.0
 pydub==0.25.1
-numpy==2.3.2
+
+psycopg2-binary
