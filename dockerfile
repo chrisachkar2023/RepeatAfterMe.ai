@@ -15,6 +15,8 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+RUN python3 -m nltk.downloader averaged_perceptron_tagger_eng
+
 COPY . .
 
 EXPOSE 8000
