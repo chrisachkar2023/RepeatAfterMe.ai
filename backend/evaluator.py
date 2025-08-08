@@ -32,9 +32,9 @@ def transcribe(audio):
 def words_to_phonemes(word):
     phones = pronouncing.phones_for_word(word)
     if phones:
-        return phones[0]  # from CMU dictionary
+        return phones[0]  
     else:
-        return generate_phonemes(word)  # fallback to g2p
+        return generate_phonemes(word)  
 
 # G2P fallback for unknown/garbled words
 def generate_phonemes(text):

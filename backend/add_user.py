@@ -12,7 +12,7 @@ def add_user(username: str, password: str) -> bool:
     existing_user = session.query(User).filter(User.username == username).first()
     if existing_user:
         session.close()
-        return False  # user exists
+        return False  
 
     # Add user
     new_user = User(username=username, password_hash=hashed_password)
