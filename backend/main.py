@@ -14,6 +14,7 @@ from gtts import gTTS
 from backend.evaluator import evaluate
 from backend.add_user import add_user
 from backend.database import SessionLocal, User, Word, SavedWord
+from backend.load_csv import create_words_table
 
 # setup FastAPI app
 app = FastAPI()
@@ -30,10 +31,20 @@ templates = Jinja2Templates(directory="frontend")
 async def favicon():
     return FileResponse("frontend/images/favicon.ico")
 
+# secret key and password hashing
 SECRET_KEY = "super-secret-key"
 serializer = URLSafeSerializer(SECRET_KEY)
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# fill words table if empty
+session = SessionLocal()
+count = session.query(Word).count()
+if count == 0:
+    create_words_table()
+    print("Words table created.")
+else:
+    print(f"Words table already has {count} entries. Skipping creation.")
+session.close()
 
 # helper function to get username from cookie
 def get_username_from_cookie(request: Request):
@@ -91,6 +102,7 @@ async def read_root(request: Request):
         "is_saved": is_saved
     })
     
+# upload form POST
 @app.post("/upload")
 async def upload_post(request: Request, word: str = Form(...), difficulty: str = Form(...), file: UploadFile = File(...)):
     username = get_username_from_cookie(request)
@@ -129,6 +141,7 @@ async def upload_post(request: Request, word: str = Form(...), difficulty: str =
 
     return RedirectResponse(url=f"/results/{session_id}", status_code=303)
 
+# results page GET
 @app.get("/results/{session_id}", response_class=HTMLResponse)
 async def show_results(request: Request, session_id: str):
     data = upload_results_cache.get(session_id)
@@ -258,6 +271,7 @@ async def word_history(request: Request):
     return HTMLResponse(history_html)
 
 
+# saved words sidebar
 @app.get("/saved", response_class=HTMLResponse)
 async def saved_words(request: Request):
     username = get_username_from_cookie(request)
@@ -291,6 +305,7 @@ async def saved_words(request: Request):
     finally:
         session.close()
 
+# API endpoint to save or unsave a word
 @app.post("/api/save-word")
 async def save_word(request: Request, data: dict = Body(...)):
     word_text = data.get("word")
