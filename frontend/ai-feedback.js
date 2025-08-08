@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const toggleBtn = document.getElementById('toggleFeedback');
     const feedbackBox = document.getElementById('feedbackBox');
 
+    // toggle feedback box visibility
     if (toggleBtn && feedbackBox) {
         toggleBtn.addEventListener('click', function () {
             const isHidden = feedbackBox.style.display === 'none';

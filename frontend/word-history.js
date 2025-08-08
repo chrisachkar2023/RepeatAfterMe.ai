@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (wordHistoryBtn) {
         wordHistoryBtn.addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent anchor from navigating
+            event.preventDefault();
             const isVisible = sidebar.style.display === 'block';
             sidebar.style.display = isVisible ? 'none' : 'block';
 

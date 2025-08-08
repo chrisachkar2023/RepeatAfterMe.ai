@@ -29,13 +29,14 @@ else {
     textContent = 'Processing audio...';
 
     recorder.onstop = () => {
+        // create a blob from the recorded chunks
         const blob = new Blob(chunks, { type: 'audio/mp3' });
         const audioURL = URL.createObjectURL(blob);
         audioPlayer.src = audioURL;
         audioPlayer.style.display = 'block';
         textContent = 'Recording ready to upload. Submit the form.';
 
-        // convert Blob to a File object and set it to the hidden file input
+        // convert blob to a file object and set it to the hidden file input
         const file = new File([blob], 'recording.mp3', { type: 'audio/mp3' });
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);

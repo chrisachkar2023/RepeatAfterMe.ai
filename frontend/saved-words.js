@@ -3,19 +3,24 @@ document.addEventListener('DOMContentLoaded', function () {
     if (star) {
         star.addEventListener('click', async function () {
             const word = document.getElementById('word').innerText.trim(); 
+            // ensure the word is not empty
             try {
                 const res = await fetch('/api/save-word', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ word })
                 });
+
                 if (res.ok) {
                     star.classList.toggle('fas');
                     star.classList.toggle('far');
-                } else {
+                } 
+                
+                else {
                     alert('Failed to save word');
                 }
-            } catch (err) {
+            } 
+            catch (err) {
                 console.error('Error saving word:', err);
             }
         });
@@ -28,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (savedWordsBtn) {
         savedWordsBtn.addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent navigation
+            event.preventDefault();
             const isVisible = savedSidebar.style.display === 'block';
             savedSidebar.style.display = isVisible ? 'none' : 'block';
 
