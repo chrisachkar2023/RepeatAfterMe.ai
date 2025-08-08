@@ -26,16 +26,19 @@
 
 ## Running With Docker
 
-Build the Docker image
+Pull the official Docker image
+
 ```
-docker build -t repeatafterme .
+docker pull repeatafterme1/repeatafterme
 ```
-Run the Docker container
+
+Run a Docker container
+
 ```
 docker run -p 8000:8000 \
   -e DATABASE_URL="<your_postgres_connection_url>" \
   -e GEMINI_API_KEY="<your_google_gemini_key>" \
-  repeatafterme
+  repeatafterme1/repeatafterme
 ```
 
 Once the container is running, open your browser and go to:
