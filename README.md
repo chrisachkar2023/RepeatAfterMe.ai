@@ -6,12 +6,12 @@
 
 ## Features
 
-- Displays words of varying difficulties for users to pronounce
+- Presents words across multiple difficulty levels
 - Records voice input directly in the browser
 - Scores pronunciation with AI models
-- User account creation
-- Allows users to save words to practice later
-- Saves recent word history
+- Supports user account creation
+- Saves words for future practice
+- Tracks recent word history
 - Easy deployment with Docker
 
 ---
